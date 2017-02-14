@@ -1,0 +1,61 @@
+################# LWE (Labyrinth)  Game Client Config File #################
+############################ SET THIS FIRST ################################
+
+# Your API key
+# Get one at https://games.cs.rit.edu/~royale/labyrinthui/getapikey/
+API_KEY 26df70396620931ee
+
+########################### MAIN GAME CONFIG ###############################
+
+# List of player modules separated by commas.  
+# The number of modules listed here specifies the number of players in the game 
+# To play via the GUI, use Human.  
+PLAYER_MODULES Human,Human
+
+# Remote gameplay with one player per PC?
+REMOTE False
+
+# Enter part one mode if there is only one player?
+PART_ONE False
+
+# Does the graphical UI display?
+UI True
+
+# Set this to get the same board every time (range: 1-999999999, False to auto generate)
+SEED 467944446
+
+# Custom treasure list (comment out to disable)
+TREASURES [[17,13,18,1,21,16],[3,19,0,11,8,6]]
+
+# Enable/disable automatic gameplay
+# True = automatic - moves are made based on the animation speed
+# False = manual - enter advances each move
+AUTO_PLAY True
+
+# Animation speed, in milliseconds (lower is faster)
+# Acceptable values: 1-3000
+ANIMATION_SPEED 500
+
+# Should the game log be printed during gameplay? 
+STDOUT_LOGGING True
+
+# Moves to make before players get control (format: PlayerMove constructor calls)
+PRE_MOVE PlayerMove( 1 , [ [0, 0],[1,0]], [1,0] , 0)
+PRE_MOVE PlayerMove( 2 , [ [6, 6],[5,6]], [5,6] , 0)
+
+################################# ADVANCED #####################################
+
+# Time limit in seconds for each player to make a move
+PLAYER_MOVE_LIMIT 10.0
+
+# Move limit
+MOVE_COUNT_LIMIT 250
+
+# Should the game log be printed during gameplay? 
+FILE_LOGGING True
+
+# Web service domain (do not change)
+WEB_SERVICE_DOMAIN games.cs.rit.edu/~royale/labyrinthui
+
+# Secure? (do not change)
+HTTPS True
