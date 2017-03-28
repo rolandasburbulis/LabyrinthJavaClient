@@ -10,6 +10,7 @@ import java.util.*;
 public class Board {
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
+    private Coordinate notValidForNextMove;
 
     public Board(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
         setupValidTileInsertionLocations();
@@ -32,15 +33,16 @@ public class Board {
     public Tile insertTile(final Tile tileToInsert, final Coordinate tileInsertionLocation) {
         Tile shiftedOutTile;
 
-        if(!validTileInsertionLocations.contains(tileInsertionLocation))
+        if(!this.validTileInsertionLocations.contains(tileInsertionLocation))
         {
             throw new IllegalArgumentException("Specified tile insertion location is not a valid tile insertion location.");
         }
 
         final int rowToInsertTileAt = tileInsertionLocation.getRow();
         final int columnToInsertTileAt = tileInsertionLocation.getCol();
+        Coordinate newNotValidForNextMove;
 
-        //Insert on north side of the board
+        //Insert on the north side of the board
         if(rowToInsertTileAt == 1) {
             Tile tileToShiftDown = null;
             Tile tileToShiftIn = tileToInsert;
@@ -52,6 +54,7 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftDown;
+            newNotValidForNextMove = new Coordinate(Coordinate.BOARD_DIM, columnToInsertTileAt);
         //Insert on the south side of the board
         } else if(rowToInsertTileAt == Coordinate.BOARD_DIM) {
             Tile tileToShiftUp = null;
@@ -64,6 +67,7 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftUp;
+            newNotValidForNextMove = new Coordinate(1, columnToInsertTileAt);
         //Insert on the west side of the board
         } else if(columnToInsertTileAt == 1) {
             Tile tileToShiftRight = null;
@@ -76,6 +80,7 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftRight;
+            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, Coordinate.BOARD_DIM);
         //Insert on the east side of the board
         } else {
             Tile tileToShiftLeft = null;
@@ -88,7 +93,15 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftLeft;
+            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, 1);
         }
+
+        if(this.notValidForNextMove != null) {
+            this.validTileInsertionLocations.add(this.notValidForNextMove);
+        }
+
+        this.validTileInsertionLocations.remove(newNotValidForNextMove);
+        this.notValidForNextMove = newNotValidForNextMove;
 
         return shiftedOutTile;
     }
