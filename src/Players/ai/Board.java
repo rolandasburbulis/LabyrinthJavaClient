@@ -1,9 +1,8 @@
 package Players.ai;
 
 import Interface.Coordinate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import java.util.*;
 
 /**
  * Represents the game board
@@ -12,9 +11,9 @@ public class Board {
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
 
-    public Board(final List<List<List<Integer>>> board) {
+    public Board(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
         setupValidTileInsertionLocations();
-        setupBoard(board);
+        setupBoard(playerHomes, board);
     }
 
     /**
@@ -114,21 +113,34 @@ public class Board {
         }
     }
 
-    private void setupBoard(final List<List<List<Integer>>> board) {
+    private void setupBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
+        Map<Coordinate, Integer> playerHomeToIdMap = new HashMap<>();
+
+        for(int playerId = 1; playerId <= playerHomes.size(); playerId++) {
+            playerHomeToIdMap.put(playerHomes.get(playerId - 1), playerId);
+        }
+
         this.board = new Tile[Coordinate.BOARD_DIM][Coordinate.BOARD_DIM];
 
-        for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
-            for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
-                final List<Integer> tileInfoList = board.get(rowIndex).get(columnIndex);
+        for(int rowIndex = 1; rowIndex <= Coordinate.BOARD_DIM; rowIndex++) {
+            for(int columnIndex = 1; columnIndex <= Coordinate.BOARD_DIM; columnIndex++) {
+                final List<Integer> tileInfoList = board.get(rowIndex - 1).get(columnIndex - 1);
 
                 final int mazePathTypeId = tileInfoList.get(0);
                 final int mazePathOrientationId = tileInfoList.get(1);
                 final int treasureTypeId = tileInfoList.get(2);
+                int playerId = -1;
+
+                final Coordinate currentTileCoordinate = new Coordinate(rowIndex, columnIndex);
+
+                if(playerHomeToIdMap.containsKey(currentTileCoordinate)) {
+                    playerId = playerHomeToIdMap.get(currentTileCoordinate);
+                }
 
                 Tile tile = new Tile(MazePathType.fromId(mazePathTypeId),
                         MazePathOrientation.fromId(mazePathOrientationId),
                         TreasureType.fromId(treasureTypeId),
-                        (byte)-1);
+                        (byte)playerId);
 
                 this.board[rowIndex][columnIndex] = tile;
             }

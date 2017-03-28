@@ -11,8 +11,6 @@ public class GameState {
     private Tile extraTile;
 
     /**
-     * @param logger, reference to the logger class
-	 * @param playerId, the id of this player
 	 * @param playerHomes, starting locations for each player, in order
 	 * @param treasures, ordered list of treasures for each player
 	 * @param board 2-d list of [Tile ID, Rotation, Treasure]
@@ -26,6 +24,6 @@ public class GameState {
                      final List<List<Integer>> treasures,
                      final List<List<List<Integer>>> board,
                      final List<Integer> extra) {
-        this.board = new Board(board);
+        this.board = new Board(playerHomes, board);
     }
 }
