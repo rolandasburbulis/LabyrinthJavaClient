@@ -3,14 +3,14 @@
 
 # Your API key
 # Get one at https://games.cs.rit.edu/~royale/labyrinthui/getapikey/
-API_KEY 26df70396620931ee
+API_KEY 8fe869d43ac930435d6
 
 ########################### MAIN GAME CONFIG ###############################
 
 # List of player modules separated by commas.  
 # The number of modules listed here specifies the number of players in the game 
 # To play via the GUI, use Human.  
-PLAYER_MODULES Human,Human
+PLAYER_MODULES Human,Computer
 
 # Remote gameplay with one player per PC?
 REMOTE False
