@@ -26,6 +26,8 @@ public enum TreasureType {
     T22(22),
     T23(23);
 
+    private int id;
+
     TreasureType(final int id) {
         this.id = id;
     }
