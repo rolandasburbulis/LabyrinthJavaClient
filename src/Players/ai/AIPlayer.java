@@ -1,25 +1,18 @@
-package Players.Human;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+package Players.ai;
 
 import Engine.Logger;
 import Interface.Coordinate;
 import Interface.PlayerModule;
 import Interface.PlayerMove;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
- * Human Player
- * 
- * The web engine defines the name of the human player,
- * 		the default is "Human"
- * 
- * You can also use this class as a starting point for your player
- * 
- * @author Adam Oest (amo9149@rit.edu)
+ * AI Player
  */
-public class Human implements PlayerModule
+public class AIPlayer implements PlayerModule
 {
 	private Logger l;
 	private int playerId;
@@ -62,8 +55,7 @@ public class Human implements PlayerModule
 	{		
 		log("Move was requested...");
 		
-		// TODO Return your move here!
-		return null;
+		return new PlayerMove(this.playerId, new ArrayList<Coordinate>(), new Coordinate(3,3), 3);
 	}
 
 	/**
