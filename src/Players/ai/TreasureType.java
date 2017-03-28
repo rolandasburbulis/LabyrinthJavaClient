@@ -1,5 +1,8 @@
 package Players.ai;
 
+/**
+ * Represents a treasure type
+ */
 public enum TreasureType {
     NONE(-1),
     T1(1),

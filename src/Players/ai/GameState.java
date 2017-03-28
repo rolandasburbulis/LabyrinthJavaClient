@@ -1,12 +1,10 @@
 package Players.ai;
 
 import Interface.Coordinate;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents AI player game state
+ * Represents game state
  */
 public class GameState {
     private Board board;

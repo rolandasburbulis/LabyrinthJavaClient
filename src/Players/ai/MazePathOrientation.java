@@ -1,5 +1,8 @@
 package Players.ai;
 
+/**
+ * Represents a maze path orientation
+ */
 public enum MazePathOrientation {
     ZERO(0),
     NINETY(1),

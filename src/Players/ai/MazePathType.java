@@ -1,5 +1,8 @@
 package Players.ai;
 
+/**
+ * Represents maze path type
+ */
 public enum MazePathType {
     L(0),
     T(1),
