@@ -139,9 +139,6 @@ public class Board {
             for(int columnIndex = 1; columnIndex <= Coordinate.BOARD_DIM; columnIndex++) {
                 final List<Integer> tileInfoList = board.get(rowIndex - 1).get(columnIndex - 1);
 
-                final int mazePathTypeId = tileInfoList.get(0);
-                final int mazePathOrientationId = tileInfoList.get(1);
-                final int treasureTypeId = tileInfoList.get(2);
                 int playerId = -1;
 
                 final Coordinate currentTileCoordinate = new Coordinate(rowIndex, columnIndex);
@@ -150,12 +147,7 @@ public class Board {
                     playerId = playerHomeToIdMap.get(currentTileCoordinate);
                 }
 
-                Tile tile = new Tile(MazePathType.fromId(mazePathTypeId),
-                        MazePathOrientation.fromId(mazePathOrientationId),
-                        TreasureType.fromId(treasureTypeId),
-                        (byte)playerId);
-
-                this.board[rowIndex][columnIndex] = tile;
+                this.board[rowIndex][columnIndex] = new Tile(tileInfoList, playerId);
             }
         }
     }

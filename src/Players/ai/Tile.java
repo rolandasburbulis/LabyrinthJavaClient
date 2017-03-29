@@ -1,21 +1,20 @@
 package Players.ai;
 
+import java.util.List;
+
 /**
  * Represents a tile of the game board
  */
 public class Tile {
     private MazePathType mazePathType;
-    private TreasureType treasureType;
     private MazePathOrientation mazePathOrientation;
-    private byte playerId;
+    private TreasureType treasureType;
+    private int playerId;
 
-    public Tile(final MazePathType mazePathType,
-                final MazePathOrientation mazePathOrientation,
-                final TreasureType treasureType,
-                final byte playerId) {
-        this.mazePathType = mazePathType;
-        this.mazePathOrientation = mazePathOrientation;
-        this.treasureType = treasureType;
+    public Tile(final List<Integer> tile, final int playerId) {
+        this.mazePathType = MazePathType.fromId(tile.get(0));
+        this.mazePathOrientation = MazePathOrientation.fromId(tile.get(1));
+        this.treasureType = TreasureType.fromId(tile.get(2));
         this.playerId = playerId;
     }
 
@@ -35,11 +34,11 @@ public class Tile {
         this.mazePathOrientation = mazePathOrientation;
     }
 
-    public byte getPlayerId() {
+    public int getPlayerId() {
         return this.playerId;
     }
 
-    public void setPlayerId(final byte playerId) {
+    public void setPlayerId(final int playerId) {
         this.playerId = playerId;
     }
 }
