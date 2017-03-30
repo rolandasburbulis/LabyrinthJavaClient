@@ -104,8 +104,8 @@ public class Board {
         this.notValidForNextMove = newNotValidForNextMove;
 
         if(shiftedOutTile.hasPlayer()) {
-            this.board[rowToInsertTileAt][columnToInsertTileAt].setPlayers(shiftedOutTile.getPlayers());
-            shiftedOutTile.clearPlayers();
+            this.board[rowToInsertTileAt][columnToInsertTileAt].addPlayers(shiftedOutTile.getPlayers());
+            shiftedOutTile.removeAllPlayers();
         }
 
         return shiftedOutTile;

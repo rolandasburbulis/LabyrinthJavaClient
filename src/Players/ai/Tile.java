@@ -45,8 +45,8 @@ public class Tile {
         return this.players;
     }
 
-    public void setPlayers(final Set<Integer> players) {
-        this.players = players;
+    public void addPlayers(final Set<Integer> players) {
+        this.players.addAll(players);
     }
 
     public void addPlayer(final int player) {
@@ -57,7 +57,7 @@ public class Tile {
         this.players.remove(player);
     }
 
-    public void clearPlayers() {
+    public void removeAllPlayers() {
         this.players.clear();
     }
 
