@@ -27,22 +27,22 @@ public class GameState {
                      final List<List<List<Integer>>> board,
                      final List<Integer> extraTile) {
         this.board = new Board(playerHomes, board);
-        this.extraTile = new Tile(extraTile, -1);
+        this.extraTile = new Tile(extraTile);
         setupTreasures(treasures);
     }
 
     private void setupTreasures(List<List<Integer>> treasures) {
         this.treasures = new HashMap<>();
 
-        for(int playerId = 1; playerId <= treasures.size(); playerId++) {
+        for(int player = 1; player <= treasures.size(); player++) {
             final Queue<TreasureType> playerTreasures = new LinkedList<TreasureType>();
 
-            for(Integer treasureId : treasures.get(playerId - 1)) {
+            for(Integer treasureId : treasures.get(player - 1)) {
                 TreasureType treasureType = TreasureType.fromId(treasureId);
                 playerTreasures.add(treasureType);
             }
 
-            this.treasures.put(playerId, playerTreasures);
+            this.treasures.put(player, playerTreasures);
         }
     }
 }

@@ -103,6 +103,11 @@ public class Board {
         this.validTileInsertionLocations.remove(newNotValidForNextMove);
         this.notValidForNextMove = newNotValidForNextMove;
 
+        if(shiftedOutTile.hasPlayer()) {
+            this.board[rowToInsertTileAt][columnToInsertTileAt].setPlayers(shiftedOutTile.getPlayers());
+            shiftedOutTile.clearPlayers();
+        }
+
         return shiftedOutTile;
     }
 
@@ -129,8 +134,8 @@ public class Board {
     private void setupBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
         Map<Coordinate, Integer> playerHomeToIdMap = new HashMap<>();
 
-        for(int playerId = 1; playerId <= playerHomes.size(); playerId++) {
-            playerHomeToIdMap.put(playerHomes.get(playerId - 1), playerId);
+        for(int player = 1; player <= playerHomes.size(); player++) {
+            playerHomeToIdMap.put(playerHomes.get(player - 1), player);
         }
 
         this.board = new Tile[Coordinate.BOARD_DIM][Coordinate.BOARD_DIM];
@@ -139,15 +144,13 @@ public class Board {
             for(int columnIndex = 1; columnIndex <= Coordinate.BOARD_DIM; columnIndex++) {
                 final List<Integer> tileInfoList = board.get(rowIndex - 1).get(columnIndex - 1);
 
-                int playerId = -1;
-
                 final Coordinate currentTileCoordinate = new Coordinate(rowIndex, columnIndex);
 
                 if(playerHomeToIdMap.containsKey(currentTileCoordinate)) {
-                    playerId = playerHomeToIdMap.get(currentTileCoordinate);
+                    this.board[rowIndex][columnIndex] = new Tile(tileInfoList, playerHomeToIdMap.get(currentTileCoordinate));
+                } else {
+                    this.board[rowIndex][columnIndex] = new Tile(tileInfoList);
                 }
-
-                this.board[rowIndex][columnIndex] = new Tile(tileInfoList, playerId);
             }
         }
     }

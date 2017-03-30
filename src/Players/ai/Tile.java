@@ -1,6 +1,8 @@
 package Players.ai;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a tile of the game board
@@ -9,13 +11,18 @@ public class Tile {
     private MazePathType mazePathType;
     private MazePathOrientation mazePathOrientation;
     private TreasureType treasureType;
-    private int playerId;
+    private Set<Integer> players;
 
-    public Tile(final List<Integer> tile, final int playerId) {
+    public Tile(final List<Integer> tile) {
         this.mazePathType = MazePathType.fromId(tile.get(0));
         this.mazePathOrientation = MazePathOrientation.fromId(tile.get(1));
         this.treasureType = TreasureType.fromId(tile.get(2));
-        this.playerId = playerId;
+        this.players = new HashSet<>();
+    }
+
+    public Tile(final List<Integer> tile, int player) {
+        this(tile);
+        this.players.add(player);
     }
 
     public MazePathType getMazePathType() {
@@ -34,11 +41,27 @@ public class Tile {
         this.mazePathOrientation = mazePathOrientation;
     }
 
-    public int getPlayerId() {
-        return this.playerId;
+    public Set<Integer> getPlayers() {
+        return this.players;
     }
 
-    public void setPlayerId(final int playerId) {
-        this.playerId = playerId;
+    public void setPlayers(final Set<Integer> players) {
+        this.players = players;
+    }
+
+    public void addPlayer(final int player) {
+        this.players.add(player);
+    }
+
+    public void removePlayer(final int player) {
+        this.players.remove(player);
+    }
+
+    public void clearPlayers() {
+        this.players.clear();
+    }
+
+    public boolean hasPlayer() {
+        return !this.players.isEmpty();
     }
 }
