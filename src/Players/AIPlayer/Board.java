@@ -1,4 +1,4 @@
-package Players.ai;
+package Players.AIPlayer;
 
 import Interface.Coordinate;
 
@@ -43,57 +43,57 @@ public class Board {
         Coordinate newNotValidForNextMove;
 
         //Insert on the north side of the board
-        if(rowToInsertTileAt == 1) {
+        if(rowToInsertTileAt == 0) {
             Tile tileToShiftDown = null;
             Tile tileToShiftIn = tileToInsert;
 
-            for(int rowIndex = 1; rowIndex <= Coordinate.BOARD_DIM; rowIndex++) {
-                tileToShiftDown = this.board[rowIndex - 1][columnToInsertTileAt - 1];
-                this.board[rowIndex - 1][columnToInsertTileAt - 1] = tileToShiftIn;
+            for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
+                tileToShiftDown = this.board[rowIndex][columnToInsertTileAt];
+                this.board[rowIndex][columnToInsertTileAt] = tileToShiftIn;
                 tileToShiftIn = tileToShiftDown;
             }
 
             shiftedOutTile = tileToShiftDown;
-            newNotValidForNextMove = new Coordinate(Coordinate.BOARD_DIM, columnToInsertTileAt);
+            newNotValidForNextMove = new Coordinate(Coordinate.BOARD_DIM - 1, columnToInsertTileAt);
         //Insert on the south side of the board
-        } else if(rowToInsertTileAt == Coordinate.BOARD_DIM) {
+        } else if(rowToInsertTileAt == (Coordinate.BOARD_DIM - 1)) {
             Tile tileToShiftUp = null;
             Tile tileToShiftIn = tileToInsert;
 
-            for(int rowIndex = Coordinate.BOARD_DIM; rowIndex > 0; rowIndex--) {
-                tileToShiftUp = this.board[rowIndex - 1][columnToInsertTileAt - 1];
-                this.board[rowIndex - 1][columnToInsertTileAt - 1] = tileToShiftIn;
+            for(int rowIndex = Coordinate.BOARD_DIM - 1; rowIndex >= 0; rowIndex--) {
+                tileToShiftUp = this.board[rowIndex][columnToInsertTileAt];
+                this.board[rowIndex][columnToInsertTileAt] = tileToShiftIn;
                 tileToShiftIn = tileToShiftUp;
             }
 
             shiftedOutTile = tileToShiftUp;
-            newNotValidForNextMove = new Coordinate(1, columnToInsertTileAt);
+            newNotValidForNextMove = new Coordinate(0, columnToInsertTileAt);
         //Insert on the west side of the board
-        } else if(columnToInsertTileAt == 1) {
+        } else if(columnToInsertTileAt == 0) {
             Tile tileToShiftRight = null;
             Tile tileToShiftIn = tileToInsert;
 
-            for(int columnIndex = 1; columnIndex <= Coordinate.BOARD_DIM; columnIndex++) {
-                tileToShiftRight = this.board[rowToInsertTileAt - 1][columnIndex - 1];
-                this.board[rowToInsertTileAt - 1][columnIndex - 1] = tileToShiftIn;
+            for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
+                tileToShiftRight = this.board[rowToInsertTileAt][columnIndex];
+                this.board[rowToInsertTileAt][columnIndex] = tileToShiftIn;
                 tileToShiftIn = tileToShiftRight;
             }
 
             shiftedOutTile = tileToShiftRight;
-            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, Coordinate.BOARD_DIM);
+            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, Coordinate.BOARD_DIM - 1);
         //Insert on the east side of the board
         } else {
             Tile tileToShiftLeft = null;
             Tile tileToShiftIn = tileToInsert;
 
-            for(int columnIndex = Coordinate.BOARD_DIM; columnIndex > 0; columnIndex--) {
-                tileToShiftLeft = this.board[rowToInsertTileAt - 1][columnIndex - 1];
-                this.board[rowToInsertTileAt - 1][columnIndex - 1] = tileToShiftIn;
+            for(int columnIndex = Coordinate.BOARD_DIM - 1; columnIndex >= 0; columnIndex--) {
+                tileToShiftLeft = this.board[rowToInsertTileAt][columnIndex];
+                this.board[rowToInsertTileAt][columnIndex] = tileToShiftIn;
                 tileToShiftIn = tileToShiftLeft;
             }
 
             shiftedOutTile = tileToShiftLeft;
-            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, 1);
+            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, 0);
         }
 
         if(this.notValidForNextMove != null) {
@@ -114,20 +114,15 @@ public class Board {
     private void setupValidTileInsertionLocations() {
         this.validTileInsertionLocations = new HashSet<Coordinate>();
 
-        //Valid insertion locations on the north and south sides of the board
-        for(int colIndex = 2; colIndex < Coordinate.BOARD_DIM; colIndex+=2) {
+        for(int index = 1; index < Coordinate.BOARD_DIM; index+=2) {
             //North side
-            this.validTileInsertionLocations.add(new Coordinate(1, colIndex));
+            this.validTileInsertionLocations.add(new Coordinate(0, index));
             //South side
-            this.validTileInsertionLocations.add(new Coordinate(7, colIndex));
-        }
-
-        //Valid insertion locations on the east and west sides of the board
-        for(int rowIndex = 2; rowIndex < Coordinate.BOARD_DIM; rowIndex+=2) {
+            this.validTileInsertionLocations.add(new Coordinate(6, index));
             //East side
-            this.validTileInsertionLocations.add(new Coordinate(rowIndex, 7));
+            this.validTileInsertionLocations.add(new Coordinate(index, 6));
             //West side
-            this.validTileInsertionLocations.add(new Coordinate(rowIndex, 1));
+            this.validTileInsertionLocations.add(new Coordinate(index, 0));
         }
     }
 
@@ -140,16 +135,21 @@ public class Board {
 
         this.board = new Tile[Coordinate.BOARD_DIM][Coordinate.BOARD_DIM];
 
-        for(int rowIndex = 1; rowIndex <= Coordinate.BOARD_DIM; rowIndex++) {
-            for(int columnIndex = 1; columnIndex <= Coordinate.BOARD_DIM; columnIndex++) {
-                final List<Integer> tileInfoList = board.get(rowIndex - 1).get(columnIndex - 1);
+        for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
+            for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
+                final List<Integer> tileInfoList = board.get(rowIndex).get(columnIndex);
 
                 final Coordinate currentTileCoordinate = new Coordinate(rowIndex, columnIndex);
 
                 if(playerHomeToIdMap.containsKey(currentTileCoordinate)) {
-                    this.board[rowIndex][columnIndex] = new Tile(tileInfoList, playerHomeToIdMap.get(currentTileCoordinate));
+                    this.board[rowIndex][columnIndex] = new Tile(MazePathType.fromId(tileInfoList.get(0)),
+                                                                 MazePathOrientation.fromId(tileInfoList.get(1)),
+                                                                 TreasureType.fromId(tileInfoList.get(2)),
+                                                                 playerHomeToIdMap.get(currentTileCoordinate));
                 } else {
-                    this.board[rowIndex][columnIndex] = new Tile(tileInfoList);
+                    this.board[rowIndex][columnIndex] = new Tile(MazePathType.fromId(tileInfoList.get(0)),
+                                                                 MazePathOrientation.fromId(tileInfoList.get(1)),
+                                                                 TreasureType.fromId(tileInfoList.get(2)));
                 }
             }
         }

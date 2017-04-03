@@ -1,4 +1,4 @@
-package Players.ai;
+package Players.AIPlayer;
 
 /**
  * Represents maze path type

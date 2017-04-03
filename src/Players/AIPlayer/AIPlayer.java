@@ -1,4 +1,4 @@
-package Players.ai;
+package Players.AIPlayer;
 
 import Engine.Logger;
 import Interface.Coordinate;
@@ -10,12 +10,13 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * AI Player
+ * AIPlayer Player
  */
 public class AIPlayer implements PlayerModule
 {
 	private Logger l;
 	private int playerId;
+	private GameState gameState;
 	
 	/**
 	 * Initializes your player module.  In this method, be sure to
@@ -40,7 +41,7 @@ public class AIPlayer implements PlayerModule
 		this.l = logger;
 		this.playerId = playerId;
 		
-		// TODO initialize board and set other state
+		this.gameState = new GameState(playerHomes.subList(0, treasures.size()), board, extra, treasures);
 		
 		log("Loaded");
 	}
@@ -54,8 +55,11 @@ public class AIPlayer implements PlayerModule
 	public PlayerMove move()
 	{		
 		log("Move was requested...");
-		
-		return new PlayerMove(this.playerId, new ArrayList<Coordinate>(), new Coordinate(3,3), 3);
+
+		List<Coordinate> path = new ArrayList<>();
+		path.add(new Coordinate(6,6));
+
+		return new PlayerMove(this.playerId, path, new Coordinate(0,1), 1);
 	}
 
 	/**
@@ -118,7 +122,7 @@ public class AIPlayer implements PlayerModule
 	private void log(String msg)
 	{
 		String message = 
-			this.l.msg("HUMAN (P" + Integer.toString(this.playerId) +")", msg);
+			this.l.msg("AI (P" + Integer.toString(this.playerId) +")", msg);
 		
 		this.l.writeln(message);
 		System.out.println(message);

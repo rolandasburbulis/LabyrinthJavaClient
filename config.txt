@@ -10,7 +10,7 @@ API_KEY 8fe869d43ac930435d6
 # List of player modules separated by commas.  
 # The number of modules listed here specifies the number of players in the game 
 # To play via the GUI, use Human.  
-PLAYER_MODULES Human,Computer
+PLAYER_MODULES Human,AIPlayer
 
 # Remote gameplay with one player per PC?
 REMOTE False
@@ -38,10 +38,6 @@ ANIMATION_SPEED 500
 
 # Should the game log be printed during gameplay? 
 STDOUT_LOGGING True
-
-# Moves to make before players get control (format: PlayerMove constructor calls)
-PRE_MOVE PlayerMove( 1 , [ [0, 0],[1,0]], [1,0] , 0)
-PRE_MOVE PlayerMove( 2 , [ [6, 6],[5,6]], [5,6] , 0)
 
 ################################# ADVANCED #####################################
 

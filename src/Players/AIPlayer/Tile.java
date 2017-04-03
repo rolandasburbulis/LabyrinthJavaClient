@@ -1,4 +1,4 @@
-package Players.ai;
+package Players.AIPlayer;
 
 import java.util.HashSet;
 import java.util.List;
@@ -13,15 +13,25 @@ public class Tile {
     private TreasureType treasureType;
     private Set<Integer> players;
 
-    public Tile(final List<Integer> tile) {
-        this.mazePathType = MazePathType.fromId(tile.get(0));
-        this.mazePathOrientation = MazePathOrientation.fromId(tile.get(1));
-        this.treasureType = TreasureType.fromId(tile.get(2));
+    public Tile(final MazePathType mazePathType,
+                final TreasureType treasureType) {
+        this.mazePathType = mazePathType;
+        this.treasureType = treasureType;
         this.players = new HashSet<>();
     }
 
-    public Tile(final List<Integer> tile, int player) {
-        this(tile);
+    public Tile(final MazePathType mazePathType,
+                final MazePathOrientation mazePathOrientation,
+                final TreasureType treasureType) {
+        this(mazePathType, treasureType);
+        this.mazePathOrientation = mazePathOrientation;
+    }
+
+    public Tile(final MazePathType mazePathType,
+                final MazePathOrientation mazePathOrientation,
+                final TreasureType treasureType,
+                final int player) {
+        this(mazePathType, mazePathOrientation, treasureType);
         this.players.add(player);
     }
 
