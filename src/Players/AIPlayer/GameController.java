@@ -48,7 +48,7 @@ public class GameController {
         }
     }
 
-    public Coordinate performBestMove() {
+    public PlayerMove performBestMove() {
         final Iterator<Coordinate> validTileInsertionLocationsIterator = this.board.getValidTileInsertionLocations().iterator();
         final int randomTileInsertionLocation = new Random().nextInt(11);
 
@@ -64,10 +64,15 @@ public class GameController {
 
         this.extraTile = this.board.insertTile(extraTile, bestMove);
 
-        return bestMove;
+        List<Coordinate> path = new ArrayList<>();
+        path.add(new Coordinate(6,6));
+
+        return new PlayerMove(2, path, bestMove, 1);
     }
 
     public void handlePlayerMove(final PlayerMove playerMove) {
+        this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(playerMove.getTileRotation()));
+
         this.extraTile = this.board.insertTile(this.extraTile, playerMove.getTileInsertion());
     }
 }

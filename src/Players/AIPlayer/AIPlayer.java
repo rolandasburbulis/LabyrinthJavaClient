@@ -56,10 +56,7 @@ public class AIPlayer implements PlayerModule
 	{		
 		log("Move was requested...");
 
-		List<Coordinate> path = new ArrayList<>();
-		path.add(new Coordinate(6,6));
-
-		return new PlayerMove(this.playerId, path, this.gameController.performBestMove(), 1);
+		return this.gameController.performBestMove();
 	}
 
 	/**
