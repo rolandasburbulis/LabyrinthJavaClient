@@ -112,7 +112,7 @@ public class Board {
     }
 
     private void setupValidTileInsertionLocations() {
-        this.validTileInsertionLocations = new HashSet<Coordinate>();
+        this.validTileInsertionLocations = new HashSet<>();
 
         for(int index = 1; index < Coordinate.BOARD_DIM; index+=2) {
             //North side
@@ -124,6 +124,10 @@ public class Board {
             //West side
             this.validTileInsertionLocations.add(new Coordinate(index, 0));
         }
+    }
+
+    public Set<Coordinate> getValidTileInsertionLocations() {
+        return this.validTileInsertionLocations;
     }
 
     private void setupBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {

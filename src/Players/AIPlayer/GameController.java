@@ -1,13 +1,14 @@
 package Players.AIPlayer;
 
 import Interface.Coordinate;
+import Interface.PlayerMove;
 
 import java.util.*;
 
 /**
- * Represents game state
+ * Represents game controller
  */
-public class GameState {
+public class GameController {
     private Board board;
     private Tile extraTile;
     private Map<Integer, Queue<TreasureType>> treasures;
@@ -22,10 +23,10 @@ public class GameState {
      * @param extraTile contains [Extra Tile ID, Treasure]
 	 * @param treasures, ordered list of treasures for each player
      */
-    public GameState(final List<Coordinate> playerHomes,
-                     final List<List<List<Integer>>> board,
-                     final List<Integer> extraTile,
-                     final List<List<Integer>> treasures) {
+    public GameController(final List<Coordinate> playerHomes,
+                          final List<List<List<Integer>>> board,
+                          final List<Integer> extraTile,
+                          final List<List<Integer>> treasures) {
         this.board = new Board(playerHomes, board);
         this.extraTile = new Tile(MazePathType.fromId(extraTile.get(0)),
                                   TreasureType.fromId(extraTile.get(1)));
@@ -45,5 +46,28 @@ public class GameState {
 
             this.treasures.put(player, playerTreasures);
         }
+    }
+
+    public Coordinate performBestMove() {
+        final Iterator<Coordinate> validTileInsertionLocationsIterator = this.board.getValidTileInsertionLocations().iterator();
+        final int randomTileInsertionLocation = new Random().nextInt(11);
+
+        int i = 0;
+
+        while(i < randomTileInsertionLocation) {
+            validTileInsertionLocationsIterator.next();
+
+            i++;
+        }
+
+        Coordinate bestMove = validTileInsertionLocationsIterator.next();
+
+        this.extraTile = this.board.insertTile(extraTile, bestMove);
+
+        return bestMove;
+    }
+
+    public void handlePlayerMove(final PlayerMove playerMove) {
+        this.extraTile = this.board.insertTile(this.extraTile, playerMove.getTileInsertion());
     }
 }

@@ -16,7 +16,7 @@ public class AIPlayer implements PlayerModule
 {
 	private Logger l;
 	private int playerId;
-	private GameState gameState;
+	private GameController gameController;
 	
 	/**
 	 * Initializes your player module.  In this method, be sure to
@@ -41,7 +41,7 @@ public class AIPlayer implements PlayerModule
 		this.l = logger;
 		this.playerId = playerId;
 		
-		this.gameState = new GameState(playerHomes.subList(0, treasures.size()), board, extra, treasures);
+		this.gameController = new GameController(playerHomes.subList(0, treasures.size()), board, extra, treasures);
 		
 		log("Loaded");
 	}
@@ -59,7 +59,7 @@ public class AIPlayer implements PlayerModule
 		List<Coordinate> path = new ArrayList<>();
 		path.add(new Coordinate(6,6));
 
-		return new PlayerMove(this.playerId, path, new Coordinate(0,1), 1);
+		return new PlayerMove(this.playerId, path, this.gameController.performBestMove(), 1);
 	}
 
 	/**
@@ -72,6 +72,8 @@ public class AIPlayer implements PlayerModule
 	public void lastMove(PlayerMove m)
 	{
 		log("Last move: " + m.toString());
+
+		this.gameController.handlePlayerMove(m);
 	}
 
 	/**
