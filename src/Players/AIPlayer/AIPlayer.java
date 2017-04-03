@@ -41,7 +41,7 @@ public class AIPlayer implements PlayerModule
 		this.l = logger;
 		this.playerId = playerId;
 		
-		this.gameController = new GameController(playerHomes.subList(0, treasures.size()), board, extra, treasures);
+		this.gameController = new GameController(playerId, playerHomes.subList(0, treasures.size()), board, extra, treasures);
 		
 		log("Loaded");
 	}

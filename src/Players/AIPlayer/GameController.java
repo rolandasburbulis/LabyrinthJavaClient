@@ -9,11 +9,13 @@ import java.util.*;
  * Represents game controller
  */
 public class GameController {
+    private int playerId;
     private Board board;
     private Tile extraTile;
     private Map<Integer, Queue<TreasureType>> treasures;
 
     /**
+     * @param playerId, the id of this player
 	 * @param playerHomes, starting locations for each player, in order
      * @param board 2-d list of [Tile ID, Rotation, Treasure]
      *        Tile IDs:  0 = L tile, 1 = T tile, 2 = I tile
@@ -23,10 +25,12 @@ public class GameController {
      * @param extraTile contains [Extra Tile ID, Treasure]
 	 * @param treasures, ordered list of treasures for each player
      */
-    public GameController(final List<Coordinate> playerHomes,
+    public GameController(final int playerId,
+                          final List<Coordinate> playerHomes,
                           final List<List<List<Integer>>> board,
                           final List<Integer> extraTile,
                           final List<List<Integer>> treasures) {
+        this.playerId = playerId;
         this.board = new Board(playerHomes, board);
         this.extraTile = new Tile(MazePathType.fromId(extraTile.get(0)),
                                   TreasureType.fromId(extraTile.get(1)));
@@ -49,25 +53,32 @@ public class GameController {
     }
 
     public PlayerMove performBestMove() {
-        final Iterator<Coordinate> validTileInsertionLocationsIterator = this.board.getValidTileInsertionLocations().iterator();
-        final int randomTileInsertionLocation = new Random().nextInt(11);
+        final Set<Coordinate> validTileInsertionLocations = this.board.getValidTileInsertionLocations();
+        final Iterator<Coordinate> validTileInsertionLocationsIterator = validTileInsertionLocations.iterator();
+        int randomTileInsertionLocation = new Random().nextInt(validTileInsertionLocations.size());
 
-        int i = 0;
-
-        while(i < randomTileInsertionLocation) {
+        while(randomTileInsertionLocation > 0) {
             validTileInsertionLocationsIterator.next();
-
-            i++;
+            randomTileInsertionLocation--;
         }
 
-        Coordinate bestMove = validTileInsertionLocationsIterator.next();
+        Coordinate chosenInsertionLocation = validTileInsertionLocationsIterator.next();
 
-        this.extraTile = this.board.insertTile(extraTile, bestMove);
+        int randomTileOrientation;
+
+        if(this.extraTile.getMazePathType().equals(MazePathType.I)) {
+            randomTileOrientation = new Random().nextInt(2);
+        } else {
+            randomTileOrientation = new Random().nextInt(4);
+        }
+
+        this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(randomTileOrientation));
+        this.extraTile = this.board.insertTile(this.extraTile, chosenInsertionLocation);
 
         List<Coordinate> path = new ArrayList<>();
         path.add(new Coordinate(6,6));
 
-        return new PlayerMove(2, path, bestMove, 1);
+        return new PlayerMove(this.playerId, path, chosenInsertionLocation, randomTileOrientation);
     }
 
     public void handlePlayerMove(final PlayerMove playerMove) {
