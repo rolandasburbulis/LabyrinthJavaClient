@@ -5,7 +5,6 @@ import Interface.Coordinate;
 import Interface.PlayerModule;
 import Interface.PlayerMove;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -40,7 +39,8 @@ public class AIPlayer implements PlayerModule
 	{
 		this.l = logger;
 		this.playerId = playerId;
-		
+
+		//SHOULDN'T NEED TO DO playerHomes.subList(...) but engine is return 4 players always at the moment
 		this.gameController = new GameController(playerId, playerHomes.subList(0, treasures.size()), board, extra, treasures);
 		
 		log("Loaded");
@@ -56,7 +56,7 @@ public class AIPlayer implements PlayerModule
 	{		
 		log("Move was requested...");
 
-		return this.gameController.performBestMove();
+		return this.gameController.generateRandomMove();
 	}
 
 	/**

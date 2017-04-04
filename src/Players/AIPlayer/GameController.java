@@ -32,6 +32,8 @@ public class GameController {
                           final List<List<Integer>> treasures) {
         this.playerId = playerId;
         this.board = new Board(playerHomes, board);
+        System.out.println("Initial board");
+        this.board.print();
         this.extraTile = new Tile(MazePathType.fromId(extraTile.get(0)),
                                   TreasureType.fromId(extraTile.get(1)));
         setupTreasures(treasures);
@@ -52,7 +54,7 @@ public class GameController {
         }
     }
 
-    public PlayerMove performBestMove() {
+    public PlayerMove generateRandomMove() {
         final Set<Coordinate> validTileInsertionLocations = this.board.getValidTileInsertionLocations();
         final Iterator<Coordinate> validTileInsertionLocationsIterator = validTileInsertionLocations.iterator();
         int randomTileInsertionLocation = new Random().nextInt(validTileInsertionLocations.size());
@@ -72,18 +74,22 @@ public class GameController {
             randomTileOrientation = new Random().nextInt(4);
         }
 
-        this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(randomTileOrientation));
-        this.extraTile = this.board.insertTile(this.extraTile, chosenInsertionLocation);
-
         List<Coordinate> path = new ArrayList<>();
         path.add(new Coordinate(6,6));
 
         return new PlayerMove(this.playerId, path, chosenInsertionLocation, randomTileOrientation);
+        //return new PlayerMove(this.playerId, path, new Coordinate(6, 1), 0);
     }
 
     public void handlePlayerMove(final PlayerMove playerMove) {
+        System.out.println("Before player " + playerMove.getPlayerId() + " move:");
+        this.board.print();
+
         this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(playerMove.getTileRotation()));
 
         this.extraTile = this.board.insertTile(this.extraTile, playerMove.getTileInsertion());
+
+        System.out.println("After player " + playerMove.getPlayerId() + " move:");
+        this.board.print();
     }
 }

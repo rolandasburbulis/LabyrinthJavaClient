@@ -10,7 +10,7 @@ import java.util.*;
 public class Board {
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
-    private Coordinate notValidForNextMove;
+    private Coordinate invalidInsertionLocation;
 
     public Board(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
         setupValidTileInsertionLocations();
@@ -38,9 +38,12 @@ public class Board {
             throw new IllegalArgumentException("Specified tile insertion location is not a valid tile insertion location.");
         }
 
+        if(this.invalidInsertionLocation != null) {
+            this.validTileInsertionLocations.add(this.invalidInsertionLocation);
+        }
+
         final int rowToInsertTileAt = tileInsertionLocation.getRow();
         final int columnToInsertTileAt = tileInsertionLocation.getCol();
-        Coordinate newNotValidForNextMove;
 
         //Insert on the north side of the board
         if(rowToInsertTileAt == 0) {
@@ -54,7 +57,7 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftDown;
-            newNotValidForNextMove = new Coordinate(Coordinate.BOARD_DIM - 1, columnToInsertTileAt);
+            this.invalidInsertionLocation = new Coordinate(Coordinate.BOARD_DIM - 1, columnToInsertTileAt);
         //Insert on the south side of the board
         } else if(rowToInsertTileAt == (Coordinate.BOARD_DIM - 1)) {
             Tile tileToShiftUp = null;
@@ -67,7 +70,7 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftUp;
-            newNotValidForNextMove = new Coordinate(0, columnToInsertTileAt);
+            this.invalidInsertionLocation = new Coordinate(0, columnToInsertTileAt);
         //Insert on the west side of the board
         } else if(columnToInsertTileAt == 0) {
             Tile tileToShiftRight = null;
@@ -80,7 +83,7 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftRight;
-            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, Coordinate.BOARD_DIM - 1);
+            this.invalidInsertionLocation = new Coordinate(rowToInsertTileAt, Coordinate.BOARD_DIM - 1);
         //Insert on the east side of the board
         } else {
             Tile tileToShiftLeft = null;
@@ -93,15 +96,10 @@ public class Board {
             }
 
             shiftedOutTile = tileToShiftLeft;
-            newNotValidForNextMove = new Coordinate(rowToInsertTileAt, 0);
+            this.invalidInsertionLocation = new Coordinate(rowToInsertTileAt, 0);
         }
 
-        if(this.notValidForNextMove != null) {
-            this.validTileInsertionLocations.add(this.notValidForNextMove);
-        }
-
-        this.validTileInsertionLocations.remove(newNotValidForNextMove);
-        this.notValidForNextMove = newNotValidForNextMove;
+        this.validTileInsertionLocations.remove(this.invalidInsertionLocation);
 
         if(shiftedOutTile.hasPlayer()) {
             this.board[rowToInsertTileAt][columnToInsertTileAt].addPlayers(shiftedOutTile.getPlayers());
@@ -109,6 +107,28 @@ public class Board {
         }
 
         return shiftedOutTile;
+    }
+
+    public Set<Coordinate> getValidTileInsertionLocations() {
+        return this.validTileInsertionLocations;
+    }
+
+    public void print() {
+        for(int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
+            for(int columnIndex = 0; columnIndex < this.board[rowIndex].length; columnIndex++) {
+                Tile tile = this.board[rowIndex][columnIndex];
+                System.out.print("(" + rowIndex + ", " + columnIndex + "):  ");
+                System.out.print(tile.getMazePathType().name() + " ");
+                System.out.print(tile.getMazePathOrientation().name() + " ");
+                System.out.print(tile.getTreasureType().name() + " ");
+
+                for(int player : tile.getPlayers()) {
+                    System.out.print(player + " ");
+                }
+
+                System.out.println();
+            }
+        }
     }
 
     private void setupValidTileInsertionLocations() {
@@ -124,10 +144,6 @@ public class Board {
             //West side
             this.validTileInsertionLocations.add(new Coordinate(index, 0));
         }
-    }
-
-    public Set<Coordinate> getValidTileInsertionLocations() {
-        return this.validTileInsertionLocations;
     }
 
     private void setupBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
