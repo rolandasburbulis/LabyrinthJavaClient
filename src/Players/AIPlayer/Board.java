@@ -116,6 +116,19 @@ public class Board {
         return this.validTileInsertionLocations;
     }
 
+    public void movePlayer(final int player, final Coordinate destinationLocation) {
+        final Coordinate currentPlayerLocation = this.playerLocations.get(player);
+
+        this.board[currentPlayerLocation.getRow()][currentPlayerLocation.getCol()].removePlayer(player);
+        this.board[destinationLocation.getRow()][currentPlayerLocation.getCol()].addPlayer(player);
+
+        this.playerLocations.put(player, destinationLocation);
+    }
+
+    public Coordinate getPlayerLocation(final int player) {
+        return this.playerLocations.get(player);
+    }
+
     public void print() {
         for(int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             for(int columnIndex = 0; columnIndex < this.board[rowIndex].length; columnIndex++) {

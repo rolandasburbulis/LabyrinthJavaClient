@@ -64,9 +64,9 @@ public class GameController {
             randomTileInsertionLocation--;
         }
 
-        Coordinate chosenInsertionLocation = validTileInsertionLocationsIterator.next();
+        final Coordinate chosenInsertionLocation = validTileInsertionLocationsIterator.next();
 
-        int randomTileOrientation;
+        final int randomTileOrientation;
 
         if(this.extraTile.getMazePathType().equals(MazePathType.I)) {
             randomTileOrientation = new Random().nextInt(2);
@@ -74,22 +74,27 @@ public class GameController {
             randomTileOrientation = new Random().nextInt(4);
         }
 
-        List<Coordinate> path = new ArrayList<>();
-        path.add(new Coordinate(6,6));
-
-        return new PlayerMove(this.playerId, path, chosenInsertionLocation, randomTileOrientation);
-        //return new PlayerMove(this.playerId, path, new Coordinate(6, 1), 0);
+        return new PlayerMove(this.playerId, generateRandomPath(), chosenInsertionLocation, randomTileOrientation);
+        //return new PlayerMove(this.playerId, generateRandomPath(), new Coordinate(6, 1), 0);
     }
 
     public void handlePlayerMove(final PlayerMove playerMove) {
-        System.out.println("Before player " + playerMove.getPlayerId() + " move:");
-        this.board.print();
+        //System.out.println("Before player " + playerMove.getPlayerId() + " move:");
+        //this.board.print();
 
         this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(playerMove.getTileRotation()));
-
         this.extraTile = this.board.insertTile(this.extraTile, playerMove.getTileInsertion());
+        this.board.movePlayer(playerMove.getPlayerId(), playerMove.getPath().get(playerMove.getPath().size() - 1));
 
-        System.out.println("After player " + playerMove.getPlayerId() + " move:");
-        this.board.print();
+        //System.out.println("After player " + playerMove.getPlayerId() + " move:");
+        //this.board.print();
+    }
+
+    private List<Coordinate> generateRandomPath() {
+        final List<Coordinate> path = new ArrayList<>();
+
+        path.add(this.board.getPlayerLocation(this.playerId));
+
+        return path;
     }
 }

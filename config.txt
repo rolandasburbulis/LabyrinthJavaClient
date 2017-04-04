@@ -10,7 +10,7 @@ API_KEY 8fe869d43ac930435d6
 # List of player modules separated by commas.  
 # The number of modules listed here specifies the number of players in the game 
 # To play via the GUI, use Human.  
-PLAYER_MODULES Human,AIPlayer
+PLAYER_MODULES AIPlayer,AIPlayer
 
 # Remote gameplay with one player per PC?
 REMOTE False
@@ -45,7 +45,7 @@ STDOUT_LOGGING True
 PLAYER_MOVE_LIMIT 10.0
 
 # Move limit
-MOVE_COUNT_LIMIT 250
+MOVE_COUNT_LIMIT 50
 
 # Should the game log be printed during gameplay? 
 FILE_LOGGING True
