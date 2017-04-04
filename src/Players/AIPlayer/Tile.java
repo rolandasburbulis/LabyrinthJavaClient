@@ -74,4 +74,8 @@ public class Tile {
     public boolean hasPlayer() {
         return !this.players.isEmpty();
     }
+
+    public boolean hasExit(final CompassDirection compassDirection) {
+        return false;
+    }
 }

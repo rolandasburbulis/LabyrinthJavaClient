@@ -32,8 +32,8 @@ public class GameController {
                           final List<List<Integer>> treasures) {
         this.playerId = playerId;
         this.board = new Board(playerHomes, board);
-        System.out.println("Initial board");
-        this.board.print();
+        //System.out.println("Initial board");
+        //this.board.print();
         this.extraTile = new Tile(MazePathType.fromId(extraTile.get(0)),
                                   TreasureType.fromId(extraTile.get(1)));
         setupTreasures(treasures);
@@ -93,7 +93,55 @@ public class GameController {
     private List<Coordinate> generateRandomPath() {
         final List<Coordinate> path = new ArrayList<>();
 
-        path.add(this.board.getPlayerLocation(this.playerId));
+        final Coordinate currentPlayerLocation = this.board.getPlayerLocation(this.playerId);
+
+        path.add(currentPlayerLocation);
+
+        Tile currentPlayerLocationTile = this.board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol());
+
+        //check neighboring tile to the north
+        if(currentPlayerLocation.getRow() > 0) {
+            Tile northTile = this.board.getTile(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol());
+
+            if(currentPlayerLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH)) {
+                path.add(new Coordinate(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol()));
+
+                return path;
+            }
+        }
+
+        //check neighboring tile to the south
+        if(currentPlayerLocation.getRow() < Coordinate.BOARD_DIM - 1) {
+            Tile southTile = this.board.getTile(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol());
+
+            if(currentPlayerLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH)) {
+                path.add(new Coordinate(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol()));
+
+                return path;
+            }
+        }
+
+        //check neighboring tile to the west
+        if(currentPlayerLocation.getCol() > 0) {
+            Tile westTile = this.board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1);
+
+            if(currentPlayerLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST)) {
+                path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1));
+
+                return path;
+            }
+        }
+
+        //check neighboring tile to the east
+        if(currentPlayerLocation.getCol() < Coordinate.BOARD_DIM - 1) {
+            Tile eastTile = this.board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1);
+
+            if(currentPlayerLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST)) {
+                path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1));
+
+                return path;
+            }
+        }
 
         return path;
     }

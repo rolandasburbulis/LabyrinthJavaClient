@@ -129,6 +129,10 @@ public class Board {
         return this.playerLocations.get(player);
     }
 
+    public Tile getTile(final int rowIndex, final int columnIndex) {
+        return this.board[rowIndex][columnIndex];
+    }
+
     public void print() {
         for(int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             for(int columnIndex = 0; columnIndex < this.board[rowIndex].length; columnIndex++) {
