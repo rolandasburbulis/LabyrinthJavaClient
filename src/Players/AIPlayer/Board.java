@@ -11,10 +11,11 @@ public class Board {
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
     private Coordinate invalidInsertionLocation;
+    private Map<Integer, Coordinate> playerLocations;
 
     public Board(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
-        setupValidTileInsertionLocations();
-        setupBoard(playerHomes, board);
+        initValidTileInsertionLocations();
+        initBoard(playerHomes, board);
     }
 
     /**
@@ -106,6 +107,8 @@ public class Board {
             shiftedOutTile.removeAllPlayers();
         }
 
+        updatePlayerLocations();
+
         return shiftedOutTile;
     }
 
@@ -131,7 +134,7 @@ public class Board {
         }
     }
 
-    private void setupValidTileInsertionLocations() {
+    private void initValidTileInsertionLocations() {
         this.validTileInsertionLocations = new HashSet<>();
 
         for(int index = 1; index < Coordinate.BOARD_DIM; index+=2) {
@@ -146,11 +149,13 @@ public class Board {
         }
     }
 
-    private void setupBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
-        Map<Coordinate, Integer> playerHomeToIdMap = new HashMap<>();
+    private void initBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
+        final Map<Coordinate, Integer> playerHomeToIdMap = new HashMap<>();
+        this.playerLocations = new HashMap<>();
 
         for(int player = 1; player <= playerHomes.size(); player++) {
             playerHomeToIdMap.put(playerHomes.get(player - 1), player);
+            this.playerLocations.put(player, playerHomes.get(player - 1));
         }
 
         this.board = new Tile[Coordinate.BOARD_DIM][Coordinate.BOARD_DIM];
@@ -170,6 +175,18 @@ public class Board {
                     this.board[rowIndex][columnIndex] = new Tile(MazePathType.fromId(tileInfoList.get(0)),
                                                                  MazePathOrientation.fromId(tileInfoList.get(1)),
                                                                  TreasureType.fromId(tileInfoList.get(2)));
+                }
+            }
+        }
+    }
+
+    private void updatePlayerLocations() {
+        this.playerLocations.clear();
+
+        for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
+            for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
+                for(int player : this.board[rowIndex][columnIndex].getPlayers()) {
+                    this.playerLocations.put(player, new Coordinate(rowIndex, columnIndex));
                 }
             }
         }
