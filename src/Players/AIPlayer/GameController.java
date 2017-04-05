@@ -74,8 +74,13 @@ public class GameController {
             randomTileOrientation = new Random().nextInt(4);
         }
 
-        return new PlayerMove(this.playerId, generateRandomPath(), chosenInsertionLocation, randomTileOrientation);
-        //return new PlayerMove(this.playerId, generateRandomPath(), new Coordinate(6, 1), 0);
+        //Create a copy of the current board with the extra tile inserted in the chosen insertion location
+        //and with the chosen tile orientation
+        Board tempBoard = this.board.createCopy();
+        this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(randomTileOrientation));
+        tempBoard.insertTile(this.extraTile, chosenInsertionLocation);
+
+        return new PlayerMove(this.playerId, generateRandomPath(tempBoard), chosenInsertionLocation, randomTileOrientation);
     }
 
     public void handlePlayerMove(final PlayerMove playerMove) {
@@ -90,18 +95,18 @@ public class GameController {
         //this.board.print();
     }
 
-    private List<Coordinate> generateRandomPath() {
+    private List<Coordinate> generateRandomPath(final Board board) {
         final List<Coordinate> path = new ArrayList<>();
 
-        final Coordinate currentPlayerLocation = this.board.getPlayerLocation(this.playerId);
+        final Coordinate currentPlayerLocation = board.getPlayerLocation(this.playerId);
 
         path.add(currentPlayerLocation);
 
-        Tile currentPlayerLocationTile = this.board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol());
+        Tile currentPlayerLocationTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol());
 
         //check neighboring tile to the north
         if(currentPlayerLocation.getRow() > 0) {
-            Tile northTile = this.board.getTile(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol());
+            Tile northTile = board.getTile(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol());
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH)) {
                 path.add(new Coordinate(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol()));
@@ -112,7 +117,7 @@ public class GameController {
 
         //check neighboring tile to the south
         if(currentPlayerLocation.getRow() < Coordinate.BOARD_DIM - 1) {
-            Tile southTile = this.board.getTile(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol());
+            Tile southTile = board.getTile(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol());
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH)) {
                 path.add(new Coordinate(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol()));
@@ -123,7 +128,7 @@ public class GameController {
 
         //check neighboring tile to the west
         if(currentPlayerLocation.getCol() > 0) {
-            Tile westTile = this.board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1);
+            Tile westTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1);
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST)) {
                 path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1));
@@ -134,7 +139,7 @@ public class GameController {
 
         //check neighboring tile to the east
         if(currentPlayerLocation.getCol() < Coordinate.BOARD_DIM - 1) {
-            Tile eastTile = this.board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1);
+            Tile eastTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1);
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST)) {
                 path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1));

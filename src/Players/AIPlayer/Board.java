@@ -2,12 +2,14 @@ package Players.AIPlayer;
 
 import Interface.Coordinate;
 
+import java.io.*;
 import java.util.*;
 
 /**
  * Represents the game board
  */
-public class Board {
+public class Board implements Serializable {
+    private static final long serialVersionUID = 3060504898708106389L;
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
     private Coordinate invalidInsertionLocation;
@@ -120,7 +122,7 @@ public class Board {
         final Coordinate currentPlayerLocation = this.playerLocations.get(player);
 
         this.board[currentPlayerLocation.getRow()][currentPlayerLocation.getCol()].removePlayer(player);
-        this.board[destinationLocation.getRow()][currentPlayerLocation.getCol()].addPlayer(player);
+        this.board[destinationLocation.getRow()][destinationLocation.getCol()].addPlayer(player);
 
         this.playerLocations.put(player, destinationLocation);
     }
@@ -149,6 +151,29 @@ public class Board {
                 System.out.println();
             }
         }
+    }
+
+    public Board createCopy() {
+        Board copy = null;
+
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(this);
+            out.flush();
+            out.close();
+
+            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+            copy = (Board) in.readObject();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+        }
+
+        return copy;
     }
 
     private void initValidTileInsertionLocations() {

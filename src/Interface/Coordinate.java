@@ -1,16 +1,19 @@
 package Interface;
 
+import java.io.Serializable;
+
 /**
  * This class represents a row, column coordinate on the
  * 	Labyrinth board
  * 
  * @author Adam Oest (amo9149@rit.edu)
  */
-public class Coordinate
+public class Coordinate implements Serializable
 {
 	// The board dimensions
 	public static final int BOARD_DIM = 7;
-	
+	private static final long serialVersionUID = 4679448616847089820L;
+
 	// Row and column coordinates
 	private int row;
 	private int col;
