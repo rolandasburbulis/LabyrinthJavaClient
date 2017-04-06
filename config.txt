@@ -34,7 +34,7 @@ AUTO_PLAY True
 
 # Animation speed, in milliseconds (lower is faster)
 # Acceptable values: 1-3000
-ANIMATION_SPEED 500
+ANIMATION_SPEED 10
 
 # Should the game log be printed during gameplay? 
 STDOUT_LOGGING True
@@ -45,7 +45,7 @@ STDOUT_LOGGING True
 PLAYER_MOVE_LIMIT 10.0
 
 # Move limit
-MOVE_COUNT_LIMIT 50
+MOVE_COUNT_LIMIT 5000
 
 # Should the game log be printed during gameplay? 
 FILE_LOGGING True

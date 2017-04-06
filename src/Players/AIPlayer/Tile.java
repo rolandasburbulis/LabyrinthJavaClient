@@ -84,112 +84,118 @@ public class Tile implements Serializable {
             throw new IllegalStateException("This tile does not have an orientation set, therefore checking if it has an exit in a particular compass direction is not valid.");
         }
 
-        if(this.mazePathType.equals(MazePathType.I)) {
-            if(this.mazePathOrientation.equals(MazePathOrientation.ZERO) || this.mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = true;
-                } else {
-                    hasExit = false;
+        switch (this.mazePathType) {
+            case I:
+                switch (this.mazePathOrientation) {
+                    case ZERO:
+                    case ONE_HUNDRED_EIGHTY:
+                        switch (compassDirection) {
+                            case NORTH:
+                            case SOUTH:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case NINETY:
+                    case TWO_HUNDRED_SEVENTY:
+                        switch (compassDirection) {
+                            case EAST:
+                            case WEST:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
                 }
-            } else {
-                if (compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = false;
-                } else if (compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = true;
-                } else if (compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = false;
-                } else {
-                    hasExit = true;
+
+                break;
+            case L:
+                switch (this.mazePathOrientation) {
+                    case ZERO:
+                        switch (compassDirection) {
+                            case WEST:
+                            case NORTH:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case NINETY:
+                        switch (compassDirection) {
+                            case NORTH:
+                            case EAST:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case ONE_HUNDRED_EIGHTY:
+                        switch (compassDirection) {
+                            case EAST:
+                            case SOUTH:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case TWO_HUNDRED_SEVENTY:
+                        switch (compassDirection) {
+                            case SOUTH:
+                            case WEST:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
                 }
-            }
-        } else if(this.mazePathType.equals(MazePathType.L)) {
-            if(this.mazePathOrientation.equals(MazePathOrientation.ZERO)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = false;
-                } else {
-                    hasExit = true;
+
+                break;
+            case T:
+                switch(this.mazePathOrientation) {
+                    case ZERO:
+                        switch (compassDirection) {
+                            case NORTH:
+                            case SOUTH:
+                            case WEST:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case NINETY:
+                        switch (compassDirection) {
+                            case NORTH:
+                            case EAST:
+                            case WEST:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case ONE_HUNDRED_EIGHTY:
+                        switch (compassDirection) {
+                            case NORTH:
+                            case EAST:
+                            case SOUTH:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
+                    case TWO_HUNDRED_SEVENTY:
+                        switch (compassDirection) {
+                            case EAST:
+                            case SOUTH:
+                            case WEST:
+                                hasExit = true;
+                                break;
+                        }
+
+                        break;
                 }
-            } else if(this.mazePathOrientation.equals(MazePathOrientation.NINETY)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = false;
-                } else {
-                    hasExit = false;
-                }
-            } else if(this.mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = true;
-                } else {
-                    hasExit = false;
-                }
-            } else {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = true;
-                } else {
-                    hasExit = true;
-                }
-            }
-        } else {
-            if(this.mazePathOrientation.equals(MazePathOrientation.ZERO)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = true;
-                } else {
-                    hasExit = true;
-                }
-            } else if(this.mazePathOrientation.equals(MazePathOrientation.NINETY)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = false;
-                } else {
-                    hasExit = true;
-                }
-            } else if(this.mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY)) {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = true;
-                } else {
-                    hasExit = false;
-                }
-            } else {
-                if(compassDirection.equals(CompassDirection.NORTH)) {
-                    hasExit = false;
-                } else if(compassDirection.equals(CompassDirection.EAST)) {
-                    hasExit = true;
-                } else if(compassDirection.equals(CompassDirection.SOUTH)) {
-                    hasExit = true;
-                } else {
-                    hasExit = true;
-                }
-            }
+
+                break;
         }
 
         return hasExit;
