@@ -54,33 +54,40 @@ public class GameController {
         }
     }
 
-    public PlayerMove generateRandomMove() {
-        final Set<Coordinate> validTileInsertionLocations = this.board.getValidTileInsertionLocations();
-        final Iterator<Coordinate> validTileInsertionLocationsIterator = validTileInsertionLocations.iterator();
-        int randomTileInsertionLocation = new Random().nextInt(validTileInsertionLocations.size());
+    public PlayerMove findBestMove() {
+        int bestApproachToTreasure = 10000;
+        Board bestBoard = null;
+        Coordinate bestInsertionLocation = null;
+        MazePathOrientation bestMazePathOrientation = null;
 
-        while(randomTileInsertionLocation > 0) {
-            validTileInsertionLocationsIterator.next();
-            randomTileInsertionLocation--;
+        for(Coordinate validTileInsertionLocation : this.board.getValidTileInsertionLocations()) {
+            for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
+                //Ignore 180 and 270 degree maze path orientation for 'I' maze type path, as they are equivalent
+                //to 0 and 90 degree maze path orientations.
+                if(extraTile.getMazePathType().equals(MazePathType.I) &&
+                        (mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY) ||
+                                mazePathOrientation.equals(MazePathOrientation.TWO_HUNDRED_SEVENTY))) {
+                    continue;
+                }
+
+                //Create a copy of the current board with the extra tile inserted in the chosen insertion location
+                //and with the chosen tile orientation
+                Board tempBoard = this.board.createCopy();
+                this.extraTile.setMazePathOrientation(mazePathOrientation);
+                tempBoard.insertTile(this.extraTile, validTileInsertionLocation);
+
+                int closestApproachToTreasure = calculateClosestApproachToTreasure(tempBoard);
+
+                if(closestApproachToTreasure < bestApproachToTreasure) {
+                    bestApproachToTreasure = closestApproachToTreasure;
+                    bestBoard = tempBoard;
+                    bestInsertionLocation = validTileInsertionLocation;
+                    bestMazePathOrientation = mazePathOrientation;
+                }
+            }
         }
 
-        final Coordinate chosenInsertionLocation = validTileInsertionLocationsIterator.next();
-
-        final int randomTileOrientation;
-
-        if(this.extraTile.getMazePathType().equals(MazePathType.I)) {
-            randomTileOrientation = new Random().nextInt(2);
-        } else {
-            randomTileOrientation = new Random().nextInt(4);
-        }
-
-        //Create a copy of the current board with the extra tile inserted in the chosen insertion location
-        //and with the chosen tile orientation
-        Board tempBoard = this.board.createCopy();
-        this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(randomTileOrientation));
-        tempBoard.insertTile(this.extraTile, chosenInsertionLocation);
-
-        return new PlayerMove(this.playerId, generateRandomPath(tempBoard), chosenInsertionLocation, randomTileOrientation);
+        return new PlayerMove(this.playerId, generateClosestPathToTreasure(bestBoard), bestInsertionLocation, bestMazePathOrientation.getId());
     }
 
     public void handlePlayerMove(final PlayerMove playerMove) {
@@ -95,7 +102,7 @@ public class GameController {
         //this.board.print();
     }
 
-    private List<Coordinate> generateRandomPath(final Board board) {
+    private List<Coordinate> generateClosestPathToTreasure(final Board board) {
         final List<Coordinate> path = new ArrayList<>();
 
         final Coordinate currentPlayerLocation = board.getPlayerLocation(this.playerId);
@@ -155,5 +162,9 @@ public class GameController {
         }
 
         return path;
+    }
+
+    private int calculateClosestApproachToTreasure(final Board board) {
+        return -1;
     }
 }

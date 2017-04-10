@@ -56,7 +56,7 @@ public class AIPlayer implements PlayerModule
 	{		
 		log("Move was requested...");
 
-		return this.gameController.generateRandomMove();
+		return this.gameController.findBestMove();
 	}
 
 	/**
