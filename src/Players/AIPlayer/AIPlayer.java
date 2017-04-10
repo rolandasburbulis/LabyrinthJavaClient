@@ -33,15 +33,17 @@ public class AIPlayer implements PlayerModule
 	 *        			 3 = 270 degrees, all clockwise
 	 * @param extra contains [Extra Tile ID, Treasure]
 	 */
-	public void init(Logger logger, int playerId, List<Coordinate> playerHomes,
-			List<List<Integer>> treasures, List<List<List<Integer>>> board,
-			List<Integer> extra) 
-	{
+	public void init(final Logger logger,
+					 final int playerId,
+					 final List<Coordinate> playerHomes,
+					 final List<List<Integer>> treasures,
+					 final List<List<List<Integer>>> board,
+					 final List<Integer> extra) {
 		this.l = logger;
 		this.playerId = playerId;
 
 		//SHOULDN'T NEED TO DO playerHomes.subList(...) but engine is return 4 players always at the moment
-		this.gameController = new GameController(playerId, playerHomes.subList(0, treasures.size()), board, extra, treasures);
+		this.gameController = new GameController(playerId, playerHomes.subList(0, treasures.size()), treasures, board, extra);
 		
 		log("Loaded");
 	}
@@ -52,8 +54,7 @@ public class AIPlayer implements PlayerModule
 	 * If you return an invalid move, your player will be invalidated
 	 * @return a PlayerMove object
 	 */
-	public PlayerMove move()
-	{		
+	public PlayerMove move() {
 		log("Move was requested...");
 
 		return this.gameController.findBestMove();
@@ -66,8 +67,7 @@ public class AIPlayer implements PlayerModule
 	 * You may also assume that all the passed moves are valid.
 	 * @param m the move
 	 */
-	public void lastMove(PlayerMove m)
-	{
+	public void lastMove(final PlayerMove m) {
 		log("Last move: " + m.toString());
 
 		this.gameController.handlePlayerMove(m);
@@ -79,8 +79,7 @@ public class AIPlayer implements PlayerModule
 	 * 
 	 * @param playerId, the id of the invalid player
 	 */
-	public void playerInvalidated(int playerId)
-	{
+	public void playerInvalidated(final int playerId) {
 		log("Player " + Integer.toString(playerId) + " was invalidated :(");
 		
 	}
@@ -94,8 +93,7 @@ public class AIPlayer implements PlayerModule
 	 * @param c the coordinate to check
 	 * @return a set of reachable adjacent coordinates
 	 */
-	public Set<Coordinate> getNeighbors(Coordinate c)
-	{
+	public Set<Coordinate> getNeighbors(final Coordinate c) {
 		return null;
 	}
 	
@@ -109,17 +107,15 @@ public class AIPlayer implements PlayerModule
 	 * @param end the end coordinate
 	 * @return an ordered list of Coordinate objects representing a path
 	 */
-	public List<Coordinate> getPath(Coordinate start, Coordinate end)
-	{
+	public List<Coordinate> getPath(final Coordinate start, final Coordinate end) {
 		return null;
 	}
 	
 	/**
 	 * Sample log function.  Use this in your debugging!
-	 * @param msg
+	 * @param msg message to log
 	 */
-	private void log(String msg)
-	{
+	private void log(final String msg) {
 		String message = 
 			this.l.msg("AI (P" + Integer.toString(this.playerId) +")", msg);
 		

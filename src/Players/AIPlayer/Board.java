@@ -10,14 +10,19 @@ import java.util.*;
  */
 public class Board implements Serializable {
     private static final long serialVersionUID = 3060504898708106389L;
+
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
     private Coordinate invalidInsertionLocation;
     private Map<Integer, Coordinate> playerLocations;
+    private Map<Integer, Queue<TreasureType>> playerTreasures;
+    private Map<TreasureType, Coordinate> treasureLocations;
 
-    public Board(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
+    Board(final List<Coordinate> playerHomes,
+          final List<List<Integer>> treasures,
+          final List<List<List<Integer>>> board) {
         initValidTileInsertionLocations();
-        initBoard(playerHomes, board);
+        initBoard(playerHomes, treasures, board);
     }
 
     /**
@@ -33,8 +38,8 @@ public class Board implements Serializable {
      * @throws IllegalArgumentException if the location where the tile should be inserted at
      * is not a valid insertion location
      */
-    public Tile insertTile(final Tile tileToInsert, final Coordinate tileInsertionLocation) {
-        Tile shiftedOutTile;
+    Tile insertTile(final Tile tileToInsert, final Coordinate tileInsertionLocation) {
+        final Tile shiftedOutTile;
 
         if(!this.validTileInsertionLocations.contains(tileInsertionLocation))
         {
@@ -48,10 +53,11 @@ public class Board implements Serializable {
         final int rowToInsertTileAt = tileInsertionLocation.getRow();
         final int columnToInsertTileAt = tileInsertionLocation.getCol();
 
+        Tile tileToShiftIn = tileToInsert;
+
         //Insert on the north side of the board
         if(rowToInsertTileAt == 0) {
             Tile tileToShiftDown = null;
-            Tile tileToShiftIn = tileToInsert;
 
             for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
                 tileToShiftDown = this.board[rowIndex][columnToInsertTileAt];
@@ -64,7 +70,6 @@ public class Board implements Serializable {
         //Insert on the south side of the board
         } else if(rowToInsertTileAt == (Coordinate.BOARD_DIM - 1)) {
             Tile tileToShiftUp = null;
-            Tile tileToShiftIn = tileToInsert;
 
             for(int rowIndex = Coordinate.BOARD_DIM - 1; rowIndex >= 0; rowIndex--) {
                 tileToShiftUp = this.board[rowIndex][columnToInsertTileAt];
@@ -77,7 +82,6 @@ public class Board implements Serializable {
         //Insert on the west side of the board
         } else if(columnToInsertTileAt == 0) {
             Tile tileToShiftRight = null;
-            Tile tileToShiftIn = tileToInsert;
 
             for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
                 tileToShiftRight = this.board[rowToInsertTileAt][columnIndex];
@@ -90,7 +94,6 @@ public class Board implements Serializable {
         //Insert on the east side of the board
         } else {
             Tile tileToShiftLeft = null;
-            Tile tileToShiftIn = tileToInsert;
 
             for(int columnIndex = Coordinate.BOARD_DIM - 1; columnIndex >= 0; columnIndex--) {
                 tileToShiftLeft = this.board[rowToInsertTileAt][columnIndex];
@@ -109,36 +112,47 @@ public class Board implements Serializable {
             shiftedOutTile.removeAllPlayers();
         }
 
-        updatePlayerLocations();
+        updatePlayerAndTreasureLocations();
 
         return shiftedOutTile;
     }
 
-    public Set<Coordinate> getValidTileInsertionLocations() {
+    Set<Coordinate> getValidTileInsertionLocations() {
         return this.validTileInsertionLocations;
     }
 
-    public void movePlayer(final int player, final Coordinate destinationLocation) {
+    void movePlayer(final int player, final Coordinate destinationLocation) {
         final Coordinate currentPlayerLocation = this.playerLocations.get(player);
 
         this.board[currentPlayerLocation.getRow()][currentPlayerLocation.getCol()].removePlayer(player);
-        this.board[destinationLocation.getRow()][destinationLocation.getCol()].addPlayer(player);
+
+        final Tile destinationTile = this.board[destinationLocation.getRow()][destinationLocation.getCol()];
+
+        destinationTile.addPlayer(player);
+
+        if(destinationTile.getTreasureType().equals(this.playerTreasures.get(player).peek())) {
+            this.playerTreasures.get(player).poll();
+        }
 
         this.playerLocations.put(player, destinationLocation);
     }
 
-    public Coordinate getPlayerLocation(final int player) {
+    Coordinate getPlayerLocation(final int player) {
         return this.playerLocations.get(player);
     }
 
-    public Tile getTile(final int rowIndex, final int columnIndex) {
+    Coordinate getPlayerNextTreasureLocation(final int player) {
+        return this.treasureLocations.get(this.playerTreasures.get(player).peek());
+    }
+
+    Tile getTile(final int rowIndex, final int columnIndex) {
         return this.board[rowIndex][columnIndex];
     }
 
     public void print() {
         for(int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             for(int columnIndex = 0; columnIndex < this.board[rowIndex].length; columnIndex++) {
-                Tile tile = this.board[rowIndex][columnIndex];
+                final Tile tile = this.board[rowIndex][columnIndex];
                 System.out.print("(" + rowIndex + ", " + columnIndex + "):  ");
                 System.out.print(tile.getMazePathType().name() + " ");
                 System.out.print(tile.getMazePathOrientation().name() + " ");
@@ -153,24 +167,21 @@ public class Board implements Serializable {
         }
     }
 
-    public Board createCopy() {
+    Board createCopy() {
         Board copy = null;
 
         try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final ObjectOutputStream out = new ObjectOutputStream(bos);
             out.writeObject(this);
             out.flush();
             out.close();
 
-            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
             copy = (Board) in.readObject();
         }
-        catch(IOException e) {
+        catch(final IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
-        catch(ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
         }
 
         return copy;
@@ -191,22 +202,35 @@ public class Board implements Serializable {
         }
     }
 
-    private void initBoard(final List<Coordinate> playerHomes, final List<List<List<Integer>>> board) {
+    private void initBoard(final List<Coordinate> playerHomes,
+                           final List<List<Integer>> treasures,
+                           final List<List<List<Integer>>> board) {
         final Map<Coordinate, Integer> playerHomeToIdMap = new HashMap<>();
         this.playerLocations = new HashMap<>();
 
         for(int player = 1; player <= playerHomes.size(); player++) {
-            playerHomeToIdMap.put(playerHomes.get(player - 1), player);
-            this.playerLocations.put(player, playerHomes.get(player - 1));
+            final Coordinate playerHome = playerHomes.get(player - 1);
+
+            playerHomeToIdMap.put(playerHome, player);
+            this.playerLocations.put(player, playerHome);
         }
 
+        initPlayerTreasures(treasures);
+
         this.board = new Tile[Coordinate.BOARD_DIM][Coordinate.BOARD_DIM];
+        this.treasureLocations = new HashMap<>();
 
         for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
             for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
                 final List<Integer> tileInfoList = board.get(rowIndex).get(columnIndex);
 
                 final Coordinate currentTileCoordinate = new Coordinate(rowIndex, columnIndex);
+
+                final TreasureType treasureType = TreasureType.fromId(tileInfoList.get(2));
+
+                if(!treasureType.equals(TreasureType.NONE)) {
+                    this.treasureLocations.put(treasureType, currentTileCoordinate);
+                }
 
                 if(playerHomeToIdMap.containsKey(currentTileCoordinate)) {
                     this.board[rowIndex][columnIndex] = new Tile(MazePathType.fromId(tileInfoList.get(0)),
@@ -222,13 +246,38 @@ public class Board implements Serializable {
         }
     }
 
-    private void updatePlayerLocations() {
+    private void initPlayerTreasures(List<List<Integer>> playerTreasures) {
+        this.playerTreasures = new HashMap<>();
+
+        for(int player = 1; player <= playerTreasures.size(); player++) {
+            final Queue<TreasureType> playerTreasuresQueue = new LinkedList<>();
+
+            for(Integer treasureId : playerTreasures.get(player - 1)) {
+                final TreasureType treasureType = TreasureType.fromId(treasureId);
+                playerTreasuresQueue.add(treasureType);
+            }
+
+            this.playerTreasures.put(player, playerTreasuresQueue);
+        }
+    }
+
+    private void updatePlayerAndTreasureLocations() {
         this.playerLocations.clear();
+        this.treasureLocations.clear();
 
         for(int rowIndex = 0; rowIndex < Coordinate.BOARD_DIM; rowIndex++) {
             for(int columnIndex = 0; columnIndex < Coordinate.BOARD_DIM; columnIndex++) {
-                for(int player : this.board[rowIndex][columnIndex].getPlayers()) {
-                    this.playerLocations.put(player, new Coordinate(rowIndex, columnIndex));
+                final Tile tile = this.board[rowIndex][columnIndex];
+                final Coordinate coordinate = new Coordinate(rowIndex, columnIndex);
+
+                for(int player : tile.getPlayers()) {
+                    this.playerLocations.put(player, coordinate);
+                }
+
+                final TreasureType treasureType = tile.getTreasureType();
+
+                if(!treasureType.equals(TreasureType.NONE)) {
+                    this.treasureLocations.put(treasureType, coordinate);
                 }
             }
         }
