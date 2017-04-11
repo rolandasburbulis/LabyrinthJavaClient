@@ -55,12 +55,16 @@ class GameController {
                 //and with the chosen tile orientation
                 final Board tempBoard = this.board.createCopy();
                 this.extraTile.setMazePathOrientation(mazePathOrientation);
-                tempBoard.insertTile(this.extraTile, tileInsertionLocation);
+                final Tile tempExtraTile = tempBoard.insertTile(this.extraTile, tileInsertionLocation);
 
                 final List<Coordinate> pathToNextTreasure = findBestPathToNextTreasure(tempBoard);
 
-                final int manhattanDistanceToTreasure = calculateManhattanDistance(pathToNextTreasure.get(pathToNextTreasure.size() - 1),
-                                                                                   tempBoard.getPlayerNextTreasureLocation(this.playerId));
+                int manhattanDistanceToTreasure = Integer.MAX_VALUE;
+
+                if(!tempExtraTile.getTreasureType().equals(tempBoard.getNextTreasureForPlayer(this.playerId))) {
+                    manhattanDistanceToTreasure = calculateManhattanDistance(pathToNextTreasure.get(pathToNextTreasure.size() - 1),
+                                                                             tempBoard.getNextTreasureLocationForPlayer(this.playerId));
+                }
 
                 if(manhattanDistanceToTreasure < bestManhattanDistanceToTreasure) {
                     bestTileInsertionLocation = tileInsertionLocation;
@@ -70,7 +74,7 @@ class GameController {
                 }
             }
         }
-        
+
         return new PlayerMove(this.playerId, bestPathToNextTreasure, bestTileInsertionLocation, bestMazePathOrientation.getId());
     }
 
@@ -92,14 +96,15 @@ class GameController {
 
         final Tile currentPlayerLocationTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol());
 
-        final List<Coordinate> possiblePaths = new ArrayList<>();
+        //final List<Coordinate> possiblePaths = new ArrayList<>();
 
         //check neighboring tile to the north
         if(currentPlayerLocation.getRow() > 0) {
             final Tile northTile = board.getTile(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol());
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH)) {
-                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol()));
+                path.add(new Coordinate(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol()));
+                return path;
             }
         }
 
@@ -108,7 +113,8 @@ class GameController {
             final Tile southTile = board.getTile(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol());
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH)) {
-                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol()));
+                path.add(new Coordinate(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol()));
+                return path;
             }
         }
 
@@ -117,7 +123,8 @@ class GameController {
             final Tile westTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1);
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST)) {
-                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1));
+                path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1));
+                return path;
             }
         }
 
@@ -126,11 +133,12 @@ class GameController {
             final Tile eastTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1);
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST)) {
-                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1));
+                path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1));
+                return path;
             }
         }
 
-        if(possiblePaths.size() > 0) {
+        /*if(possiblePaths.size() > 0) {
             final Iterator<Coordinate> possiblePathsIterator = possiblePaths.iterator();
             int randomPossiblePath = new Random().nextInt(possiblePaths.size());
 
@@ -140,7 +148,7 @@ class GameController {
             }
 
             path.add(possiblePathsIterator.next());
-        }
+        }*/
 
         return path;
     }

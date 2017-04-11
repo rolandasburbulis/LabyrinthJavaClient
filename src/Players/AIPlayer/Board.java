@@ -141,7 +141,11 @@ public class Board implements Serializable {
         return this.playerLocations.get(player);
     }
 
-    Coordinate getPlayerNextTreasureLocation(final int player) {
+    TreasureType getNextTreasureForPlayer(final int player) {
+        return this.playerTreasures.get(player).peek();
+    }
+
+    Coordinate getNextTreasureLocationForPlayer(final int player) {
         return this.treasureLocations.get(this.playerTreasures.get(player).peek());
     }
 
