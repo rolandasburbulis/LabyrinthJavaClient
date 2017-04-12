@@ -54,14 +54,15 @@ class GameController {
                 //Create a copy of the current board with the extra tile inserted in the chosen insertion location
                 //and with the chosen tile orientation
                 final Board tempBoard = this.board.createCopy();
-                this.extraTile.setMazePathOrientation(mazePathOrientation);
-                final Tile tempExtraTile = tempBoard.insertTile(this.extraTile, tileInsertionLocation);
+                final Tile tempExtraTile = this.extraTile.createCopy();
+                tempExtraTile.setMazePathOrientation(mazePathOrientation);
+                final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
 
                 final List<Coordinate> pathToNextTreasure = findBestPathToNextTreasure(tempBoard);
 
                 int manhattanDistanceToTreasure = Integer.MAX_VALUE;
 
-                if(!tempExtraTile.getTreasureType().equals(tempBoard.getNextTreasureForPlayer(this.playerId))) {
+                if(!newTempExtraTile.getTreasureType().equals(tempBoard.getNextTreasureForPlayer(this.playerId))) {
                     manhattanDistanceToTreasure = calculateManhattanDistance(pathToNextTreasure.get(pathToNextTreasure.size() - 1),
                                                                              tempBoard.getNextTreasureLocationForPlayer(this.playerId));
                 }
@@ -96,15 +97,14 @@ class GameController {
 
         final Tile currentPlayerLocationTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol());
 
-        //final List<Coordinate> possiblePaths = new ArrayList<>();
+        final List<Coordinate> possiblePaths = new ArrayList<>();
 
         //check neighboring tile to the north
         if(currentPlayerLocation.getRow() > 0) {
             final Tile northTile = board.getTile(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol());
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH)) {
-                path.add(new Coordinate(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol()));
-                return path;
+                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow() - 1, currentPlayerLocation.getCol()));
             }
         }
 
@@ -113,8 +113,7 @@ class GameController {
             final Tile southTile = board.getTile(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol());
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH)) {
-                path.add(new Coordinate(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol()));
-                return path;
+                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow() + 1, currentPlayerLocation.getCol()));
             }
         }
 
@@ -123,8 +122,7 @@ class GameController {
             final Tile westTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1);
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST)) {
-                path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1));
-                return path;
+                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() - 1));
             }
         }
 
@@ -133,12 +131,11 @@ class GameController {
             final Tile eastTile = board.getTile(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1);
 
             if(currentPlayerLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST)) {
-                path.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1));
-                return path;
+                possiblePaths.add(new Coordinate(currentPlayerLocation.getRow(), currentPlayerLocation.getCol() + 1));
             }
         }
 
-        /*if(possiblePaths.size() > 0) {
+        if(possiblePaths.size() > 0) {
             final Iterator<Coordinate> possiblePathsIterator = possiblePaths.iterator();
             int randomPossiblePath = new Random().nextInt(possiblePaths.size());
 
@@ -148,7 +145,7 @@ class GameController {
             }
 
             path.add(possiblePathsIterator.next());
-        }*/
+        }
 
         return path;
     }

@@ -1,6 +1,6 @@
 package Players.AIPlayer;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,69 +48,69 @@ public class Tile implements Serializable {
         hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.WEST.ordinal());
     }
 
-    public Tile(final MazePathType mazePathType,
-                final TreasureType treasureType) {
+    Tile(final MazePathType mazePathType,
+         final TreasureType treasureType) {
         this.mazePathType = mazePathType;
         this.treasureType = treasureType;
         this.players = new HashSet<>();
     }
 
-    public Tile(final MazePathType mazePathType,
-                final MazePathOrientation mazePathOrientation,
-                final TreasureType treasureType) {
+    Tile(final MazePathType mazePathType,
+         final MazePathOrientation mazePathOrientation,
+         final TreasureType treasureType) {
         this(mazePathType, treasureType);
         this.mazePathOrientation = mazePathOrientation;
     }
 
-    public Tile(final MazePathType mazePathType,
-                final MazePathOrientation mazePathOrientation,
-                final TreasureType treasureType,
-                final int player) {
+    Tile(final MazePathType mazePathType,
+         final MazePathOrientation mazePathOrientation,
+         final TreasureType treasureType,
+         final int player) {
         this(mazePathType, mazePathOrientation, treasureType);
         this.players.add(player);
     }
 
-    public MazePathType getMazePathType() {
+    MazePathType getMazePathType() {
         return this.mazePathType;
     }
 
-    public MazePathOrientation getMazePathOrientation() {
+    MazePathOrientation getMazePathOrientation() {
         return this.mazePathOrientation;
     }
 
-    public TreasureType getTreasureType() {
+    TreasureType getTreasureType() {
         return this.treasureType;
     }
 
-    public void setMazePathOrientation(final MazePathOrientation mazePathOrientation) {
+    void setMazePathOrientation(final MazePathOrientation mazePathOrientation) {
         this.mazePathOrientation = mazePathOrientation;
     }
 
-    public Set<Integer> getPlayers() {
+    Set<Integer> getPlayers() {
         return this.players;
     }
 
-    public void addPlayers(final Set<Integer> players) {
+    void addPlayers(final Set<Integer> players) {
         this.players.addAll(players);
     }
 
-    public void addPlayer(final int player) {
+    void addPlayer(final int player) {
         this.players.add(player);
     }
 
-    public void removePlayer(final int player) {
+    void removePlayer(final int player) {
         this.players.remove(player);
     }
 
-    public void removeAllPlayers() {
+    void removeAllPlayers() {
         this.players.clear();
     }
 
-    public boolean hasPlayer() {
+    boolean hasPlayer() {
         return !this.players.isEmpty();
     }
 
-    public boolean hasExit(final CompassDirection compassDirection) {
+    boolean hasExit(final CompassDirection compassDirection) {
         if(this.mazePathOrientation == null) {
             throw new IllegalStateException("This tile does not have an orientation set, therefore checking if it has an exit in a particular compass direction is not valid.");
         }
@@ -118,5 +118,25 @@ public class Tile implements Serializable {
         return Tile.hasExitLookupTable.contains(this.mazePathType.getId() * 100 +
                                                 this.mazePathOrientation.getId() * 10 +
                                                 compassDirection.ordinal());
+    }
+
+    Tile createCopy() {
+        Tile copy = null;
+
+        try {
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            final ObjectOutputStream out = new ObjectOutputStream(bos);
+            out.writeObject(this);
+            out.flush();
+            out.close();
+
+            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+            copy = (Tile) in.readObject();
+        }
+        catch(final IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return copy;
     }
 }
