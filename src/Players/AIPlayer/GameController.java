@@ -38,8 +38,8 @@ class GameController {
     PlayerMove findBestMove() {
         Coordinate bestTileInsertionLocation = null;
         MazePathOrientation bestMazePathOrientation = null;
-        List<Coordinate> bestPathToNextTreasure = null;
-        int bestManhattanDistanceToTreasure = Integer.MAX_VALUE;
+        List<Coordinate> bestPathToNextGoal = null;
+        int bestManhattanDistanceToGoal = Integer.MAX_VALUE;
 
         for(Coordinate tileInsertionLocation : this.board.getValidTileInsertionLocations()) {
             for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
@@ -51,32 +51,41 @@ class GameController {
                     continue;
                 }
 
-                //Create a copy of the current board with the extra tile inserted in the chosen insertion location
-                //and with the chosen tile orientation
+                //Create a copy of the current board and extra tile and insert the extra tile in the chosen insertion
+                // location with the chosen tile orientation
                 final Board tempBoard = this.board.createCopy();
                 final Tile tempExtraTile = this.extraTile.createCopy();
                 tempExtraTile.setMazePathOrientation(mazePathOrientation);
                 final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
 
-                final List<Coordinate> pathToNextTreasure = findBestPathToNextTreasure(tempBoard);
+                final TreasureType nextTreasureForPlayer = tempBoard.getNextTreasureForPlayer(this.playerId);
+                Coordinate nextGoalCoordinate = null;
+                List<Coordinate> pathTowardsNextGoal = null;
+                int manhattanDistanceToGoal = Integer.MAX_VALUE;
 
-                int manhattanDistanceToTreasure = Integer.MAX_VALUE;
-
-                if(!newTempExtraTile.getTreasureType().equals(tempBoard.getNextTreasureForPlayer(this.playerId))) {
-                    manhattanDistanceToTreasure = calculateManhattanDistance(pathToNextTreasure.get(pathToNextTreasure.size() - 1),
-                                                                             tempBoard.getNextTreasureLocationForPlayer(this.playerId));
+                ///If the player collected all treasures
+                if(nextTreasureForPlayer == null) {
+                    nextGoalCoordinate = tempBoard.getPlayerHome(this.playerId);
+                //If the player hasn't collected all of their treasures and the treasure is on the board (not on extra tile)
+                } else if(!newTempExtraTile.getTreasureType().equals(nextTreasureForPlayer)) {
+                    nextGoalCoordinate = tempBoard.getNextTreasureLocationForPlayer(this.playerId);
                 }
 
-                if(manhattanDistanceToTreasure < bestManhattanDistanceToTreasure) {
+                if(nextGoalCoordinate != null) {
+                    pathTowardsNextGoal = findBestPathTowardsNextGoal(tempBoard, tempBoard.getPlayerLocation(this.playerId), nextGoalCoordinate);
+                    manhattanDistanceToGoal = calculateManhattanDistance(pathTowardsNextGoal.get(pathTowardsNextGoal.size() - 1), nextGoalCoordinate);
+                }
+
+                if(manhattanDistanceToGoal < bestManhattanDistanceToGoal) {
                     bestTileInsertionLocation = tileInsertionLocation;
                     bestMazePathOrientation = mazePathOrientation;
-                    bestPathToNextTreasure = pathToNextTreasure;
-                    bestManhattanDistanceToTreasure = manhattanDistanceToTreasure;
+                    bestPathToNextGoal = pathTowardsNextGoal;
+                    bestManhattanDistanceToGoal = manhattanDistanceToGoal;
                 }
             }
         }
 
-        return new PlayerMove(this.playerId, bestPathToNextTreasure, bestTileInsertionLocation, bestMazePathOrientation.getId());
+        return new PlayerMove(this.playerId, bestPathToNextGoal, bestTileInsertionLocation, bestMazePathOrientation.getId());
     }
 
     void handlePlayerMove(final PlayerMove playerMove) {
@@ -88,7 +97,9 @@ class GameController {
         this.board.movePlayer(playerMove.getPlayerId(), playerPath.get(playerPath.size() - 1));
     }
 
-    private List<Coordinate> findBestPathToNextTreasure(final Board board) {
+    private List<Coordinate> findBestPathTowardsNextGoal(final Board board,
+                                                         final Coordinate startCoordinate,
+                                                         final Coordinate goalCoordinate) {
         final List<Coordinate> path = new ArrayList<>();
 
         final Coordinate currentPlayerLocation = board.getPlayerLocation(this.playerId);

@@ -14,6 +14,7 @@ public class Board implements Serializable {
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
     private Coordinate invalidInsertionLocation;
+    private Map<Integer, Coordinate> playerHomes;
     private Map<Integer, Coordinate> playerLocations;
     private Map<Integer, Queue<TreasureType>> playerTreasures;
     private Map<TreasureType, Coordinate> treasureLocations;
@@ -41,8 +42,7 @@ public class Board implements Serializable {
     Tile insertTile(final Tile tileToInsert, final Coordinate tileInsertionLocation) {
         final Tile shiftedOutTile;
 
-        if(!this.validTileInsertionLocations.contains(tileInsertionLocation))
-        {
+        if(!this.validTileInsertionLocations.contains(tileInsertionLocation)) {
             throw new IllegalArgumentException("Specified tile insertion location is not a valid tile insertion location.");
         }
 
@@ -137,6 +137,10 @@ public class Board implements Serializable {
         this.playerLocations.put(player, destinationLocation);
     }
 
+    Coordinate getPlayerHome(final int player) {
+        return this.playerHomes.get(player);
+    }
+
     Coordinate getPlayerLocation(final int player) {
         return this.playerLocations.get(player);
     }
@@ -210,12 +214,14 @@ public class Board implements Serializable {
                            final List<List<Integer>> treasures,
                            final List<List<List<Integer>>> board) {
         final Map<Coordinate, Integer> playerHomeToIdMap = new HashMap<>();
+        this.playerHomes = new HashMap<>();
         this.playerLocations = new HashMap<>();
 
         for(int player = 1; player <= playerHomes.size(); player++) {
             final Coordinate playerHome = playerHomes.get(player - 1);
 
             playerHomeToIdMap.put(playerHome, player);
+            this.playerHomes.put(player, playerHome);
             this.playerLocations.put(player, playerHome);
         }
 
