@@ -13,39 +13,39 @@ public class Tile implements Serializable {
     private MazePathOrientation mazePathOrientation;
     private TreasureType treasureType;
     private Set<Integer> players;
-    private static Set<String> hasExitLookupTable;
+    private static Set<Integer> hasExitLookupTable;
 
     static {
         hasExitLookupTable = new HashSet<>();
 
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.WEST.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.I.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.WEST.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.WEST.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.L.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.WEST.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.ZERO.toString() + CompassDirection.WEST.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.NINETY.toString() + CompassDirection.WEST.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.NORTH.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.ONE_HUNDRED_EIGHTY.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.EAST.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.SOUTH.toString());
-        hasExitLookupTable.add(MazePathType.T.toString() + MazePathOrientation.TWO_HUNDRED_SEVENTY.toString() + CompassDirection.WEST.toString());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.WEST.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.I.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.WEST.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.WEST.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.L.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.WEST.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.ZERO.getId() * 10 + CompassDirection.WEST.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.NINETY.getId() * 10 + CompassDirection.WEST.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.NORTH.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.ONE_HUNDRED_EIGHTY.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.EAST.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.SOUTH.ordinal());
+        hasExitLookupTable.add(MazePathType.T.getId() * 100 + MazePathOrientation.TWO_HUNDRED_SEVENTY.getId() * 10 + CompassDirection.WEST.ordinal());
     }
 
     public Tile(final MazePathType mazePathType,
@@ -115,8 +115,8 @@ public class Tile implements Serializable {
             throw new IllegalStateException("This tile does not have an orientation set, therefore checking if it has an exit in a particular compass direction is not valid.");
         }
 
-        return Tile.hasExitLookupTable.contains(this.mazePathType.toString() +
-                                                this.mazePathOrientation.toString() +
-                                                compassDirection.toString());
+        return Tile.hasExitLookupTable.contains(this.mazePathType.getId() * 100 +
+                                                this.mazePathOrientation.getId() * 10 +
+                                                compassDirection.ordinal());
     }
 }
