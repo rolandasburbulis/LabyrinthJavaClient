@@ -1,30 +1,17 @@
 package Model;
 
-import java.io.IOException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.http.message.BasicNameValuePair;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import Engine.Config;
-import Engine.GlobalConfig;
-import Engine.HasLogger;
-import Engine.Lobby;
-import Engine.Logger;
+import Engine.*;
 import Interface.Coordinate;
 import Interface.PlayerModule;
 import Interface.PlayerMove;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.util.*;
 
 /**
  * A dummy model that replicates the state sent by the 

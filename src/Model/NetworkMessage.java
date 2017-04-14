@@ -1,11 +1,11 @@
 package Model;
 
+import org.apache.http.message.BasicNameValuePair;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.http.message.BasicNameValuePair;
 
 public class NetworkMessage
 {

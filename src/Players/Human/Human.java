@@ -1,13 +1,12 @@
 package Players.Human;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import Engine.Logger;
 import Interface.Coordinate;
 import Interface.PlayerModule;
 import Interface.PlayerMove;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Human Player

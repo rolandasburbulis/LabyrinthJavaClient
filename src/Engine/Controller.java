@@ -1,17 +1,15 @@
 package Engine;
 
+import Interface.PlayerModule;
+import Interface.PlayerMove;
+import Model.ModelProxy;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import Model.ModelProxy;
-import Players.*;
-import Interface.*;
-import Engine.Lobby;
 
 /**
  * The main game controller determines the flow of execution

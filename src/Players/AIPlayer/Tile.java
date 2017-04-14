@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Represents a tile of the game board
  */
-public class Tile implements Serializable {
+class Tile implements Serializable {
     private static final long serialVersionUID = 584189200277769504L;
     private MazePathType mazePathType;
     private MazePathOrientation mazePathOrientation;
@@ -20,9 +20,9 @@ public class Tile implements Serializable {
                 [MazePathOrientation.values().length]
                 [CompassDirection.values().length];
 
-        for (int mazePathType = 0; mazePathType < MazePathType.values().length; mazePathType++) {
-            for (int mazePathOrientation = 0; mazePathOrientation < MazePathOrientation.values().length; mazePathOrientation++) {
-                for (int compassDirection = 0; compassDirection < CompassDirection.values().length; compassDirection++) {
+        for(int mazePathType = 0; mazePathType < MazePathType.values().length; mazePathType++) {
+            for(int mazePathOrientation = 0; mazePathOrientation < MazePathOrientation.values().length; mazePathOrientation++) {
+                for(int compassDirection = 0; compassDirection < CompassDirection.values().length; compassDirection++) {
                     hasExitLookupTable[mazePathType][mazePathOrientation][compassDirection] = false;
                 }
             }

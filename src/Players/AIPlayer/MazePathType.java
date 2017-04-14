@@ -3,7 +3,7 @@ package Players.AIPlayer;
 /**
  * Represents maze path type
  */
-public enum MazePathType {
+enum MazePathType {
     L(0),
     T(1),
     I(2);

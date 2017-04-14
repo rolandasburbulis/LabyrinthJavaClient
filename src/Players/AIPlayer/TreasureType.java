@@ -3,7 +3,7 @@ package Players.AIPlayer;
 /**
  * Represents a treasure type
  */
-public enum TreasureType {
+enum TreasureType {
     NONE(-1),
     T1(0),
     T2(1),

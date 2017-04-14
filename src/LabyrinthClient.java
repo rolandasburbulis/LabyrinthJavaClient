@@ -1,10 +1,10 @@
-import java.util.HashMap;
-import java.util.Map;
-
 import Engine.Config;
+import Engine.Controller;
 import Engine.GlobalConfig;
 import Engine.Logger;
-import Engine.Controller;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Java implementation of the RIT Quoridor Game Web Client

@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Represents the game board
  */
-public class Board implements Serializable {
+class Board implements Serializable {
     private static final long serialVersionUID = 3060504898708106389L;
 
     private Tile[][] board;
@@ -161,6 +161,7 @@ public class Board implements Serializable {
         for(int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             for(int columnIndex = 0; columnIndex < this.board[rowIndex].length; columnIndex++) {
                 final Tile tile = this.board[rowIndex][columnIndex];
+
                 System.out.print("(" + rowIndex + ", " + columnIndex + "):  ");
                 System.out.print(tile.getMazePathType().name() + " ");
                 System.out.print(tile.getMazePathOrientation().name() + " ");

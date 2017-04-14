@@ -3,7 +3,7 @@ package Players.AIPlayer;
 /**
  * Represents a maze path orientation
  */
-public enum MazePathOrientation {
+enum MazePathOrientation {
     ZERO(0),
     NINETY(1),
     ONE_HUNDRED_EIGHTY(2),

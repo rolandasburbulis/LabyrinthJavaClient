@@ -36,11 +36,8 @@ class GameController {
     }
 
     PlayerMove findBestMove() {
-        Coordinate bestTileInsertionLocation = null;
-        MazePathOrientation bestMazePathOrientation = null;
-        List<Coordinate> bestPathToNextGoal = null;
+        final List<PlayerMove> bestPlayerMoves = new ArrayList<>();
         int bestManhattanDistanceToGoal = Integer.MAX_VALUE;
-        boolean breakout = false;
 
         for(Coordinate tileInsertionLocation : this.board.getValidTileInsertionLocations()) {
             for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
@@ -60,42 +57,42 @@ class GameController {
                 final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
 
                 final TreasureType nextTreasureForPlayer = tempBoard.getNextTreasureForPlayer(this.playerId);
-                Coordinate nextGoalCoordinate = null;
-                List<Coordinate> pathTowardsNextGoal = null;
-                int manhattanDistanceToGoal = Integer.MAX_VALUE;
+                final Coordinate nextGoalCoordinate;
 
                 ///If the player collected all treasures
                 if(nextTreasureForPlayer == null) {
                     nextGoalCoordinate = tempBoard.getPlayerHome(this.playerId);
-                //If the player hasn't collected all of their treasures and the treasure is on the board (not on extra tile)
+                //If the player hasn't collected all of their treasures and the next treasure they need to collect is
+                //on the board (not on extra tile)
                 } else if(!newTempExtraTile.getTreasureType().equals(nextTreasureForPlayer)) {
                     nextGoalCoordinate = tempBoard.getNextTreasureLocationForPlayer(this.playerId);
+                //If the next treasure player needs to collect is on the extra tile
+                } else {
+                    continue;
                 }
 
-                if(nextGoalCoordinate != null) {
-                    pathTowardsNextGoal = findBestPathTowardsNextGoal(tempBoard, nextGoalCoordinate);
-                    manhattanDistanceToGoal = calculateManhattanDistance(pathTowardsNextGoal.get(pathTowardsNextGoal.size() - 1), nextGoalCoordinate);
+                final List<Coordinate> pathTowardsNextGoal = findBestPathTowardsNextGoal(tempBoard, nextGoalCoordinate);
+
+                if(pathTowardsNextGoal.get(pathTowardsNextGoal.size() - 1).equals(nextGoalCoordinate)) {
+                    return new PlayerMove(this.playerId, pathTowardsNextGoal, tileInsertionLocation, mazePathOrientation.ordinal());
                 }
 
-                if(manhattanDistanceToGoal < bestManhattanDistanceToGoal) {
-                    bestTileInsertionLocation = tileInsertionLocation;
-                    bestMazePathOrientation = mazePathOrientation;
-                    bestPathToNextGoal = pathTowardsNextGoal;
-                    bestManhattanDistanceToGoal = manhattanDistanceToGoal;
-                }
+                final int manhattanDistanceToGoal = calculateManhattanDistance(pathTowardsNextGoal.get(pathTowardsNextGoal.size() - 1), nextGoalCoordinate);
 
-                if(bestManhattanDistanceToGoal == 0) {
-                    breakout = true;
-                    break;
-                }
-            }
+                if(manhattanDistanceToGoal <= bestManhattanDistanceToGoal) {
+                    final PlayerMove playerMove = new PlayerMove(this.playerId, pathTowardsNextGoal, tileInsertionLocation, mazePathOrientation.ordinal());
 
-            if(breakout) {
-                break;
+                    if(manhattanDistanceToGoal < bestManhattanDistanceToGoal) {
+                        bestPlayerMoves.clear();
+                        bestManhattanDistanceToGoal = manhattanDistanceToGoal;
+                    }
+
+                    bestPlayerMoves.add(playerMove);
+                }
             }
         }
 
-        return new PlayerMove(this.playerId, bestPathToNextGoal, bestTileInsertionLocation, bestMazePathOrientation.getId());
+        return bestPlayerMoves.get(new Random().nextInt(bestPlayerMoves.size()));
     }
 
     void handlePlayerMove(final PlayerMove playerMove) {
@@ -114,30 +111,29 @@ class GameController {
                                                                                              board.getPlayerLocation(this.playerId),
                                                                                              new HashMap<>());
 
-        Coordinate bestReachableCoordinate = null;
+        final List<Coordinate> bestReachableCoordinates = new ArrayList<>();
 
         if(reachableCoordinates.containsKey(goalCoordinate)) {
-            bestReachableCoordinate = goalCoordinate;
+            bestReachableCoordinates.add(goalCoordinate);
         } else {
             int bestManhattanDistanceReachableCoordinateToGoal = Integer.MAX_VALUE;
 
-            for (Coordinate reachableCoordinate : reachableCoordinates.keySet()) {
+            for(Coordinate reachableCoordinate : reachableCoordinates.keySet()) {
                 final int manhattanDistanceReachableCoordinateToGoal = calculateManhattanDistance(reachableCoordinate, goalCoordinate);
 
-                if (manhattanDistanceReachableCoordinateToGoal < bestManhattanDistanceReachableCoordinateToGoal) {
-                    bestReachableCoordinate = reachableCoordinate;
-
-                    if (manhattanDistanceReachableCoordinateToGoal == 1) {
-                        break;
+                if(manhattanDistanceReachableCoordinateToGoal <= bestManhattanDistanceReachableCoordinateToGoal) {
+                    if(manhattanDistanceReachableCoordinateToGoal < bestManhattanDistanceReachableCoordinateToGoal) {
+                        bestReachableCoordinates.clear();
+                        bestManhattanDistanceReachableCoordinateToGoal = manhattanDistanceReachableCoordinateToGoal;
                     }
 
-                    bestManhattanDistanceReachableCoordinateToGoal = manhattanDistanceReachableCoordinateToGoal;
+                    bestReachableCoordinates.add(reachableCoordinate);
                 }
             }
         }
 
         Stack<Coordinate> reverseBestPathTowardsNextGoal = new Stack<>();
-        Coordinate pathCoordinate = bestReachableCoordinate;
+        Coordinate pathCoordinate = bestReachableCoordinates.get(new Random().nextInt(bestReachableCoordinates.size()));
 
         do {
             reverseBestPathTowardsNextGoal.push(pathCoordinate);

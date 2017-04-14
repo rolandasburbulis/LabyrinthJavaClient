@@ -1,17 +1,20 @@
 package Model;
 
+import Engine.GlobalConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.message.BasicNameValuePair;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
-import java.awt.Desktop;
 import java.net.URI;
 import java.net.URLEncoder;
-
-import org.jsoup.*;
-import org.apache.http.message.BasicNameValuePair;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import Engine.GlobalConfig;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class that facilitates network communication

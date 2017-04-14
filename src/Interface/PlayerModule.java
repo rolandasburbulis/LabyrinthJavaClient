@@ -1,10 +1,9 @@
 package Interface;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import Engine.Logger;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * The interface that student modules must implement
