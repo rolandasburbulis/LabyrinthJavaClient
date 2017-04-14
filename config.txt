@@ -25,7 +25,7 @@ UI True
 SEED 467944446
 
 # Custom treasure list (comment out to disable)
-TREASURES [[17,13,18,1,21,16],[3,19,0,11,8,6]]
+TREASURES [[1,2,3,4,5,6],[7,8,9,10,11,12]]
 
 # Enable/disable automatic gameplay
 # True = automatic - moves are made based on the animation speed
@@ -34,7 +34,7 @@ AUTO_PLAY True
 
 # Animation speed, in milliseconds (lower is faster)
 # Acceptable values: 1-3000
-ANIMATION_SPEED 10
+ANIMATION_SPEED 200
 
 # Should the game log be printed during gameplay? 
 STDOUT_LOGGING True

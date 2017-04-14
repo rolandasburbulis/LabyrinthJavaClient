@@ -40,13 +40,10 @@ class GameController {
         MazePathOrientation bestMazePathOrientation = null;
         List<Coordinate> bestPathToNextGoal = null;
         int bestManhattanDistanceToGoal = Integer.MAX_VALUE;
+        boolean breakout = false;
 
         for(Coordinate tileInsertionLocation : this.board.getValidTileInsertionLocations()) {
             for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
-                if(bestManhattanDistanceToGoal == 0) {
-                    break;
-                }
-
                 //Ignore 180 and 270 degree maze path orientation for 'I' maze type path, as they are equivalent
                 //to 0 and 90 degree maze path orientations.
                 if(extraTile.getMazePathType().equals(MazePathType.I) &&
@@ -86,6 +83,15 @@ class GameController {
                     bestPathToNextGoal = pathTowardsNextGoal;
                     bestManhattanDistanceToGoal = manhattanDistanceToGoal;
                 }
+
+                if(bestManhattanDistanceToGoal == 0) {
+                    breakout = true;
+                    break;
+                }
+            }
+
+            if(breakout) {
+                break;
             }
         }
 
@@ -103,16 +109,19 @@ class GameController {
 
     private List<Coordinate> findBestPathTowardsNextGoal(final Board board,
                                                          final Coordinate goalCoordinate) {
-        final Set<Coordinate> reachableCoordinates = findAllReachableCoordinates(board, board.getPlayerLocation(this.playerId), new HashSet<>());
+        final Map<Coordinate, Coordinate> reachableCoordinates = findAllReachableCoordinates(board,
+                                                                                             null,
+                                                                                             board.getPlayerLocation(this.playerId),
+                                                                                             new HashMap<>());
 
         Coordinate bestReachableCoordinate = null;
 
-        if(reachableCoordinates.contains(goalCoordinate)) {
+        if(reachableCoordinates.containsKey(goalCoordinate)) {
             bestReachableCoordinate = goalCoordinate;
         } else {
             int bestManhattanDistanceReachableCoordinateToGoal = Integer.MAX_VALUE;
 
-            for (Coordinate reachableCoordinate : reachableCoordinates) {
+            for (Coordinate reachableCoordinate : reachableCoordinates.keySet()) {
                 final int manhattanDistanceReachableCoordinateToGoal = calculateManhattanDistance(reachableCoordinate, goalCoordinate);
 
                 if (manhattanDistanceReachableCoordinateToGoal < bestManhattanDistanceReachableCoordinateToGoal) {
@@ -127,26 +136,39 @@ class GameController {
             }
         }
 
+        Stack<Coordinate> reverseBestPathTowardsNextGoal = new Stack<>();
+        Coordinate pathCoordinate = bestReachableCoordinate;
+
+        do {
+            reverseBestPathTowardsNextGoal.push(pathCoordinate);
+            pathCoordinate = reachableCoordinates.get(pathCoordinate);
+        }
+        while(pathCoordinate != null);
+
         List<Coordinate> bestPathTowardsNextGoal = new ArrayList<>();
-        bestPathTowardsNextGoal.add(board.getPlayerLocation(this.playerId));
+
+        while(!reverseBestPathTowardsNextGoal.empty()) {
+            bestPathTowardsNextGoal.add(reverseBestPathTowardsNextGoal.pop());
+        }
 
         return bestPathTowardsNextGoal;
     }
 
-    private Set<Coordinate> findAllReachableCoordinates(final Board board,
-                                                        final Coordinate currentLocationCoordinate,
-                                                        final Set<Coordinate> reachableCoordinates) {
+    private Map<Coordinate, Coordinate> findAllReachableCoordinates(final Board board,
+                                                                    final Coordinate arrivedFromLocationCoordinate,
+                                                                    final Coordinate currentLocationCoordinate,
+                                                                    final HashMap<Coordinate, Coordinate> reachableCoordinates) {
         final Tile currentLocationTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol());
 
-        reachableCoordinates.add(currentLocationCoordinate);
+        reachableCoordinates.put(currentLocationCoordinate, arrivedFromLocationCoordinate);
 
         //check neighboring tile to the north
         if(currentLocationCoordinate.getRow() > 0) {
             final Coordinate northTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() - 1, currentLocationCoordinate.getCol());
             final Tile northTile = board.getTile(northTileCoordinate.getRow(), northTileCoordinate.getCol());
 
-            if(currentLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH) && !reachableCoordinates.contains(northTileCoordinate)) {
-                reachableCoordinates.addAll(findAllReachableCoordinates(board, northTileCoordinate, reachableCoordinates));
+            if(currentLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH) && !reachableCoordinates.containsKey(northTileCoordinate)) {
+                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, northTileCoordinate, reachableCoordinates));
             }
         }
 
@@ -155,8 +177,8 @@ class GameController {
             final Coordinate southTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
             final Tile southTile = board.getTile(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
 
-            if(currentLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH) && !reachableCoordinates.contains(southTileCoordinate)) {
-                reachableCoordinates.addAll(findAllReachableCoordinates(board, southTileCoordinate, reachableCoordinates));
+            if(currentLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH) && !reachableCoordinates.containsKey(southTileCoordinate)) {
+                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, southTileCoordinate, reachableCoordinates));
             }
         }
 
@@ -165,8 +187,8 @@ class GameController {
             final Coordinate westTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
             final Tile westTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
 
-            if(currentLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST) && !reachableCoordinates.contains(westTileCoordinate)) {
-                reachableCoordinates.addAll(findAllReachableCoordinates(board, westTileCoordinate, reachableCoordinates));
+            if(currentLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST) && !reachableCoordinates.containsKey(westTileCoordinate)) {
+                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, westTileCoordinate, reachableCoordinates));
             }
         }
 
@@ -175,8 +197,8 @@ class GameController {
             final Coordinate eastTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
             final Tile eastTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
 
-            if(currentLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST) && !reachableCoordinates.contains(eastTileCoordinate)) {
-                reachableCoordinates.addAll(findAllReachableCoordinates(board, eastTileCoordinate, reachableCoordinates));
+            if(currentLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST) && !reachableCoordinates.containsKey(eastTileCoordinate)) {
+                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, eastTileCoordinate, reachableCoordinates));
             }
         }
 
