@@ -71,6 +71,16 @@ class GameController {
                     continue;
                 }
 
+                final Coordinate currentPlayerLocation = tempBoard.getPlayerLocation(this.playerId);
+
+                if(nextGoalCoordinate.equals(currentPlayerLocation)) {
+                    List<Coordinate> path = new ArrayList<>();
+
+                    path.add(currentPlayerLocation);
+
+                    return new PlayerMove(this.playerId, path, tileInsertionLocation, mazePathOrientation.ordinal());
+                }
+
                 final List<Coordinate> pathTowardsNextGoal = findBestPathTowardsNextGoal(tempBoard, nextGoalCoordinate);
 
                 if(pathTowardsNextGoal.get(pathTowardsNextGoal.size() - 1).equals(nextGoalCoordinate)) {
@@ -109,6 +119,7 @@ class GameController {
         final Map<Coordinate, Coordinate> reachableCoordinates = findAllReachableCoordinates(board,
                                                                                              null,
                                                                                              board.getPlayerLocation(this.playerId),
+                                                                                             goalCoordinate,
                                                                                              new HashMap<>());
 
         final List<Coordinate> bestReachableCoordinates = new ArrayList<>();
@@ -132,19 +143,19 @@ class GameController {
             }
         }
 
-        Stack<Coordinate> reverseBestPathTowardsNextGoal = new Stack<>();
+        Stack<Coordinate> bestReversePathTowardsNextGoal = new Stack<>();
         Coordinate pathCoordinate = bestReachableCoordinates.get(new Random().nextInt(bestReachableCoordinates.size()));
 
         do {
-            reverseBestPathTowardsNextGoal.push(pathCoordinate);
+            bestReversePathTowardsNextGoal.push(pathCoordinate);
             pathCoordinate = reachableCoordinates.get(pathCoordinate);
         }
         while(pathCoordinate != null);
 
         List<Coordinate> bestPathTowardsNextGoal = new ArrayList<>();
 
-        while(!reverseBestPathTowardsNextGoal.empty()) {
-            bestPathTowardsNextGoal.add(reverseBestPathTowardsNextGoal.pop());
+        while(!bestReversePathTowardsNextGoal.empty()) {
+            bestPathTowardsNextGoal.add(bestReversePathTowardsNextGoal.pop());
         }
 
         return bestPathTowardsNextGoal;
@@ -153,6 +164,7 @@ class GameController {
     private Map<Coordinate, Coordinate> findAllReachableCoordinates(final Board board,
                                                                     final Coordinate arrivedFromLocationCoordinate,
                                                                     final Coordinate currentLocationCoordinate,
+                                                                    final Coordinate nextGoalCoordinate,
                                                                     final HashMap<Coordinate, Coordinate> reachableCoordinates) {
         final Tile currentLocationTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol());
 
@@ -163,38 +175,68 @@ class GameController {
             final Coordinate northTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() - 1, currentLocationCoordinate.getCol());
             final Tile northTile = board.getTile(northTileCoordinate.getRow(), northTileCoordinate.getCol());
 
-            if(currentLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH) && !reachableCoordinates.containsKey(northTileCoordinate)) {
-                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, northTileCoordinate, reachableCoordinates));
+            if(currentLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH)) {
+                if(northTileCoordinate.equals(nextGoalCoordinate)) {
+                    reachableCoordinates.put(northTileCoordinate, currentLocationCoordinate);
+
+                    return reachableCoordinates;
+                } else if(!reachableCoordinates.containsKey(northTileCoordinate)) {
+                    reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, northTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                }
             }
         }
 
-        //check neighboring tile to the south
-        if(currentLocationCoordinate.getRow() < Coordinate.BOARD_DIM - 1) {
-            final Coordinate southTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
-            final Tile southTile = board.getTile(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
+        if(!reachableCoordinates.containsKey(nextGoalCoordinate)) {
+            //check neighboring tile to the south
+            if (currentLocationCoordinate.getRow() < Coordinate.BOARD_DIM - 1) {
+                final Coordinate southTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
+                final Tile southTile = board.getTile(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
 
-            if(currentLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH) && !reachableCoordinates.containsKey(southTileCoordinate)) {
-                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, southTileCoordinate, reachableCoordinates));
+                if (currentLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH)) {
+                    if (southTileCoordinate.equals(nextGoalCoordinate)) {
+                        reachableCoordinates.put(southTileCoordinate, currentLocationCoordinate);
+
+                        return reachableCoordinates;
+                    } else if (!reachableCoordinates.containsKey(southTileCoordinate)) {
+                        reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, southTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                    }
+                }
             }
-        }
 
-        //check neighboring tile to the west
-        if(currentLocationCoordinate.getCol() > 0) {
-            final Coordinate westTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
-            final Tile westTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
+            if(!reachableCoordinates.containsKey(nextGoalCoordinate)) {
+                //check neighboring tile to the west
+                if(currentLocationCoordinate.getCol() > 0) {
+                    final Coordinate westTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
+                    final Tile westTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
 
-            if(currentLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST) && !reachableCoordinates.containsKey(westTileCoordinate)) {
-                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, westTileCoordinate, reachableCoordinates));
-            }
-        }
+                    if(currentLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST)) {
+                        if(westTileCoordinate.equals(nextGoalCoordinate)) {
+                            reachableCoordinates.put(westTileCoordinate, currentLocationCoordinate);
 
-        //check neighboring tile to the east
-        if(currentLocationCoordinate.getCol() < Coordinate.BOARD_DIM - 1) {
-            final Coordinate eastTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
-            final Tile eastTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
+                            return reachableCoordinates;
+                        } else if(!reachableCoordinates.containsKey(westTileCoordinate)) {
+                            reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, westTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                        }
+                    }
+                }
 
-            if(currentLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST) && !reachableCoordinates.containsKey(eastTileCoordinate)) {
-                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, eastTileCoordinate, reachableCoordinates));
+                if(!reachableCoordinates.containsKey(nextGoalCoordinate)) {
+                    //check neighboring tile to the east
+                    if(currentLocationCoordinate.getCol() < Coordinate.BOARD_DIM - 1) {
+                        final Coordinate eastTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
+                        final Tile eastTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
+
+                        if(currentLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST)) {
+                            if(eastTileCoordinate.equals(nextGoalCoordinate)) {
+                                reachableCoordinates.put(eastTileCoordinate, currentLocationCoordinate);
+
+                                return reachableCoordinates;
+                            } else if(!reachableCoordinates.containsKey(eastTileCoordinate)) {
+                                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, eastTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                            }
+                        }
+                    }
+                }
             }
         }
 

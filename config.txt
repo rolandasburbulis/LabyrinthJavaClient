@@ -10,7 +10,7 @@ API_KEY 8fe869d43ac930435d6
 # List of player modules separated by commas.  
 # The number of modules listed here specifies the number of players in the game 
 # To play via the GUI, use Human.  
-PLAYER_MODULES AIPlayer,AIPlayer
+PLAYER_MODULES Human,AIPlayer
 
 # Remote gameplay with one player per PC?
 REMOTE False
@@ -34,7 +34,7 @@ AUTO_PLAY True
 
 # Animation speed, in milliseconds (lower is faster)
 # Acceptable values: 1-3000
-ANIMATION_SPEED 200
+ANIMATION_SPEED 500
 
 # Should the game log be printed during gameplay? 
 STDOUT_LOGGING True
