@@ -35,7 +35,7 @@ class Board implements Serializable {
      * @param tileToInsert - tile to be inserted
      * @param tileInsertionLocation - location where the tile to be inserted will be inserted at
      *
-     * @return Tile that was pused out as a result of the inserted tile
+     * @return Tile that was pushed out as a result of the inserted tile
      * @throws IllegalArgumentException if the location where the tile should be inserted at
      * is not a valid insertion location
      */
