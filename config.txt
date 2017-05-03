@@ -22,7 +22,7 @@ PART_ONE False
 UI True
 
 # Set this to get the same board every time (range: 1-999999999, False to auto generate)
-SEED 467944434
+SEED 468944111
 
 # Custom treasure list (comment out to disable)
 TREASURES [[1,2,3,4,5,6],[7,8,9,10,11,12]]

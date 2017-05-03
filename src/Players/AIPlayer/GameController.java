@@ -145,7 +145,7 @@ class GameController {
 
         if(opponentNextGoalCoordinate != null) {
             final List<Coordinate> opponentPathTowardsNextGoal = findBestPathTowardsNextGoalForPlayer(board, this.nextOpponentPlayerId, opponentNextGoalCoordinate);
-            opponentManhattanDistanceToGoal = calculateManhattanDistance(board.getPlayerLocation(this.nextOpponentPlayerId), opponentPathTowardsNextGoal.get(opponentPathTowardsNextGoal.size() - 1));
+            opponentManhattanDistanceToGoal = calculateManhattanDistance(opponentPathTowardsNextGoal.get(opponentPathTowardsNextGoal.size() - 1), opponentNextGoalCoordinate);
         }
 
         return opponentManhattanDistanceToGoal;
