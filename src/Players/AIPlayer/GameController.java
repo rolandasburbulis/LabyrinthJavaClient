@@ -40,7 +40,7 @@ class GameController {
     PlayerMove findBestMove() {
         final List<PlayerMove> bestPlayerMoves = new ArrayList<>();
         int myBestManhattanDistanceToGoal = Integer.MAX_VALUE;
-        int worstNextOpponentManhattanDistanceToGoal = 0;
+        int nextOpponentWorstManhattanDistanceToGoal = 0;
 
         for(Coordinate tileInsertionLocation : this.board.getValidTileInsertionLocations()) {
             for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
@@ -82,10 +82,10 @@ class GameController {
                     if(myBestManhattanDistanceToGoal != 0) {
                         bestPlayerMoves.clear();
                         myBestManhattanDistanceToGoal = 0;
-                        worstNextOpponentManhattanDistanceToGoal = 0;
+                        nextOpponentWorstManhattanDistanceToGoal = 0;
                     }
 
-                    opponentManhattanDistanceToGoal = calculateOpponentManhattanDistanceToGoal(tempBoard, newTempExtraTile);
+                    opponentManhattanDistanceToGoal = calculateNextOpponentBestManhattanDistanceToGoal(tempBoard, newTempExtraTile);
                 } else {
                     final int myManhattanDistanceToGoal = calculateManhattanDistance(myPathTowardsNextGoal.get(myPathTowardsNextGoal.size() - 1), myNextGoalCoordinate);
 
@@ -93,17 +93,17 @@ class GameController {
                         if(myManhattanDistanceToGoal < myBestManhattanDistanceToGoal) {
                             bestPlayerMoves.clear();
                             myBestManhattanDistanceToGoal = myManhattanDistanceToGoal;
-                            worstNextOpponentManhattanDistanceToGoal = 0;
+                            nextOpponentWorstManhattanDistanceToGoal = 0;
                         }
 
-                        opponentManhattanDistanceToGoal = calculateOpponentManhattanDistanceToGoal(tempBoard, newTempExtraTile);
+                        opponentManhattanDistanceToGoal = calculateNextOpponentBestManhattanDistanceToGoal(tempBoard, newTempExtraTile);
                     }
                 }
 
-                if(opponentManhattanDistanceToGoal >= worstNextOpponentManhattanDistanceToGoal) {
-                    if(opponentManhattanDistanceToGoal > worstNextOpponentManhattanDistanceToGoal) {
+                if(opponentManhattanDistanceToGoal >= nextOpponentWorstManhattanDistanceToGoal) {
+                    if(opponentManhattanDistanceToGoal > nextOpponentWorstManhattanDistanceToGoal) {
                         bestPlayerMoves.clear();
-                        worstNextOpponentManhattanDistanceToGoal = opponentManhattanDistanceToGoal;
+                        nextOpponentWorstManhattanDistanceToGoal = opponentManhattanDistanceToGoal;
                     }
 
                     bestPlayerMoves.add(new PlayerMove(this.playerId, myPathTowardsNextGoal, tileInsertionLocation, mazePathOrientation.ordinal()));
@@ -139,16 +139,53 @@ class GameController {
         return null;
     }
 
-    private int calculateOpponentManhattanDistanceToGoal(final Board board, final Tile extraTile) {
-        final Coordinate opponentNextGoalCoordinate = getNextGoalCoordinateForPlayer(board, this.nextOpponentPlayerId, extraTile);
-        int opponentManhattanDistanceToGoal = Integer.MAX_VALUE;
+    private int calculateNextOpponentBestManhattanDistanceToGoal(final Board board, final Tile extraTile) {
+        int nextOpponentBestManhattanDistanceToGoal = Integer.MAX_VALUE;
 
-        if(opponentNextGoalCoordinate != null) {
-            final List<Coordinate> opponentPathTowardsNextGoal = findBestPathTowardsNextGoalForPlayer(board, this.nextOpponentPlayerId, opponentNextGoalCoordinate);
-            opponentManhattanDistanceToGoal = calculateManhattanDistance(opponentPathTowardsNextGoal.get(opponentPathTowardsNextGoal.size() - 1), opponentNextGoalCoordinate);
+        for(Coordinate tileInsertionLocation : board.getValidTileInsertionLocations()) {
+            for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
+                //Ignore 180 and 270 degree maze path orientation for 'I' maze type path, as they are equivalent
+                //to 0 and 90 degree maze path orientations.
+                if(extraTile.getMazePathType().equals(MazePathType.I) &&
+                        (mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY) ||
+                                mazePathOrientation.equals(MazePathOrientation.TWO_HUNDRED_SEVENTY))) {
+                    continue;
+                }
+
+                //Create a copy of the current board and extra tile and insert the extra tile in the chosen insertion
+                // location with the chosen tile orientation
+                final Board tempBoard = board.createCopy();
+                final Tile tempExtraTile = extraTile.createCopy();
+                tempExtraTile.setMazePathOrientation(mazePathOrientation);
+                final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
+
+                final Coordinate nextOpponentNextGoalCoordinate = getNextGoalCoordinateForPlayer(tempBoard, this.nextOpponentPlayerId, newTempExtraTile);
+
+                int nextOpponentManhattanDistanceToGoal = Integer.MAX_VALUE;
+
+                if(nextOpponentNextGoalCoordinate != null) {
+                    final Coordinate nextOpponentCurrentLocationCoordinate = tempBoard.getPlayerLocation(this.nextOpponentPlayerId);
+
+                    if(nextOpponentCurrentLocationCoordinate.equals(nextOpponentNextGoalCoordinate)) {
+                        return 0;
+                    } else {
+                        final List<Coordinate> nextOpponentPathTowardsNextGoal = findBestPathTowardsNextGoalForPlayer(tempBoard, this.nextOpponentPlayerId, nextOpponentNextGoalCoordinate);
+
+                        if(nextOpponentPathTowardsNextGoal.get(nextOpponentPathTowardsNextGoal.size() - 1).equals(nextOpponentNextGoalCoordinate)) {
+                            return 0;
+                        } else {
+                            nextOpponentManhattanDistanceToGoal = calculateManhattanDistance(nextOpponentPathTowardsNextGoal.get(nextOpponentPathTowardsNextGoal.size() - 1), nextOpponentNextGoalCoordinate);
+                        }
+                    }
+                }
+
+                if(nextOpponentManhattanDistanceToGoal < nextOpponentBestManhattanDistanceToGoal) {
+                    nextOpponentBestManhattanDistanceToGoal = nextOpponentManhattanDistanceToGoal;
+                }
+            }
         }
 
-        return opponentManhattanDistanceToGoal;
+        return nextOpponentBestManhattanDistanceToGoal;
     }
 
     private List<Coordinate> findBestPathTowardsNextGoalForPlayer(final Board board,
