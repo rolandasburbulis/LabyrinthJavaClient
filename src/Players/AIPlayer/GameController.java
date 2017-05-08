@@ -42,84 +42,139 @@ class GameController {
         int myBestManhattanDistanceToGoal = Integer.MAX_VALUE;
         int nextOpponentWorstManhattanDistanceToGoal = 0;
 
+        //Consider all valid tile insertion locations
         for(Coordinate tileInsertionLocation : this.board.getValidTileInsertionLocations()) {
+            System.out.println("Insertion location:  (" + tileInsertionLocation.getRow() + "," + tileInsertionLocation.getCol() +" )");
+
+            //Consider all extra tile orientations
             for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
+                System.out.println("Tile orientation: " + mazePathOrientation);
+
                 //Ignore 180 and 270 degree maze path orientation for 'I' maze type path, as they are equivalent
                 //to 0 and 90 degree maze path orientations.
                 if(extraTile.getMazePathType().equals(MazePathType.I) &&
                         (mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY) ||
                                 mazePathOrientation.equals(MazePathOrientation.TWO_HUNDRED_SEVENTY))) {
+                    System.out.println("Skipping orientation");
                     continue;
                 }
 
                 //Create a copy of the current board and extra tile and insert the extra tile in the chosen insertion
-                // location with the chosen tile orientation
-                final Board tempBoard = this.board.createCopy();
-                final Tile tempExtraTile = this.extraTile.createCopy();
+                //location with the chosen tile orientation
+                final Board tempBoard = (Board)Cloner.deepCopy(this.board);
+                final Tile tempExtraTile = (Tile)Cloner.deepCopy(this.extraTile);
                 tempExtraTile.setMazePathOrientation(mazePathOrientation);
                 final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
 
+                //Get the next goal coordinate for the player, which is the coordinate of the tile having the player's
+                //next treasure or, if the player already collected all of its treasures, the coordinate of the  player's
+                //home tile.
                 final Coordinate myNextGoalCoordinate = getNextGoalCoordinateForPlayer(tempBoard, this.playerId, newTempExtraTile);
 
+                //Goal coordinate would be null if it is not reachable, which would happen if player's next treasure
+                //is on the resulting extra tile after extra tile insertion
                 if(myNextGoalCoordinate == null) {
+                    System.out.println("This causes my next goal to be on extra tile, skipping this move");
                     continue;
                 }
 
                 final Coordinate myCurrentLocationCoordinate = tempBoard.getPlayerLocation(this.playerId);
                 final List<Coordinate> myPathTowardsNextGoal;
 
+                //If the player is already on the tile in needs to reach next, the current location is the desired path
+                //(no pawn move)
                 if(myNextGoalCoordinate.equals(myCurrentLocationCoordinate)) {
+                    System.out.println("I don't even need to move, I'm already there");
                     List<Coordinate> path = new ArrayList<>();
                     path.add(myCurrentLocationCoordinate);
                     myPathTowardsNextGoal = path;
+                //If the player's goal coordinate is not the player's current location, find the best path towards the next goal
                 } else {
                     myPathTowardsNextGoal = findBestPathTowardsNextGoalForPlayer(tempBoard, this.playerId, myNextGoalCoordinate);
                 }
 
-                int opponentManhattanDistanceToGoal = -1;
+                int nextOpponentManhattanDistanceToGoal = -1;
 
+                //If the last coordinate in the path is the goal coordinate, that means we have a path to the goal coordinate
                 if(myPathTowardsNextGoal.get(myPathTowardsNextGoal.size() - 1).equals(myNextGoalCoordinate)) {
+                    System.out.println("I can reach my goal with this insertion");
+
+                    //If this is the first path we found leading all the way to the goal coordinate
                     if(myBestManhattanDistanceToGoal != 0) {
                         bestPlayerMoves.clear();
                         myBestManhattanDistanceToGoal = 0;
                         nextOpponentWorstManhattanDistanceToGoal = 0;
+                        System.out.println("Cleared previous moves");
                     }
 
-                    opponentManhattanDistanceToGoal = calculateNextOpponentBestManhattanDistanceToGoal(tempBoard, newTempExtraTile);
+                    //Calculate next opponent's best Manhattan distance to their next goal coordinate, considering all
+                    //possible insertions that the next opponent would be allowed to do after this move
+                    nextOpponentManhattanDistanceToGoal = calculateNextOpponentBestManhattanDistanceToGoal(tempBoard, newTempExtraTile);
+
+                    System.out.println("Opponent can get within " + nextOpponentManhattanDistanceToGoal + " steps to their next goal");
+                //If the last coordinate in the path is not the goal coordinate, the goal coordinate is not reachable
                 } else {
+                    //Calculate Manhattan distance from the closest approach to the next goal coordinate to the goal coordinate
                     final int myManhattanDistanceToGoal = calculateManhattanDistance(myPathTowardsNextGoal.get(myPathTowardsNextGoal.size() - 1), myNextGoalCoordinate);
 
+                    System.out.println("I can get within " + myManhattanDistanceToGoal + " steps to my next goal");
+
+                    //If the Manhattan disatance from the closest approach to the next goal coordinate to the goal coordinate is
+                    //better than or equal than the approach to the goal coordinate from previously considered insertions
                     if(myManhattanDistanceToGoal <= myBestManhattanDistanceToGoal) {
+                        System.out.println("Which is better or equal that previously seen insertions");
+
+                        //If the Manhattan disatance from the closest approach to the next goal coordinate to the goal coordinate is
+                        //better than the approach to the goal coordinate from previously considered insertions
                         if(myManhattanDistanceToGoal < myBestManhattanDistanceToGoal) {
                             bestPlayerMoves.clear();
                             myBestManhattanDistanceToGoal = myManhattanDistanceToGoal;
                             nextOpponentWorstManhattanDistanceToGoal = 0;
+                            System.out.println("Cleared previous moves");
                         }
 
-                        opponentManhattanDistanceToGoal = calculateNextOpponentBestManhattanDistanceToGoal(tempBoard, newTempExtraTile);
+                        //Calculate next opponent's best Manhattan distance to their next goal coordinate, considering all
+                        //possible insertions that the next opponent would be allowed to do after this move
+                        nextOpponentManhattanDistanceToGoal = calculateNextOpponentBestManhattanDistanceToGoal(tempBoard, newTempExtraTile);
+
+                        System.out.println("Opponent can get within " + nextOpponentManhattanDistanceToGoal + " steps to their next goal");
                     }
                 }
 
-                if(opponentManhattanDistanceToGoal >= nextOpponentWorstManhattanDistanceToGoal) {
-                    if(opponentManhattanDistanceToGoal > nextOpponentWorstManhattanDistanceToGoal) {
+                //If the opponent's best Manhattan distance distance to their next goal coordinate is worse than or equal
+                //than the approach to their goal coordinate from previously considered insertions
+                if(nextOpponentManhattanDistanceToGoal >= nextOpponentWorstManhattanDistanceToGoal) {
+                    //If the opponent's best Manhattan distance distance to their next goal coordinate is worse than the
+                    //approach to their goal coordinate from previously considered insertions
+                    if(nextOpponentManhattanDistanceToGoal > nextOpponentWorstManhattanDistanceToGoal) {
                         bestPlayerMoves.clear();
-                        nextOpponentWorstManhattanDistanceToGoal = opponentManhattanDistanceToGoal;
+                        nextOpponentWorstManhattanDistanceToGoal = nextOpponentManhattanDistanceToGoal;
+                        System.out.println("Cleared previous moves");
                     }
 
+                    //Save this move
                     bestPlayerMoves.add(new PlayerMove(this.playerId, myPathTowardsNextGoal, tileInsertionLocation, mazePathOrientation.ordinal()));
+                    System.out.println("Saving this move");
                 }
             }
         }
 
+        System.out.println("Found " + bestPlayerMoves.size() + " moves");
+
+        //Return a random move from the list of equally good moves
         return bestPlayerMoves.get(new Random().nextInt(bestPlayerMoves.size()));
     }
 
     void handlePlayerMove(final PlayerMove playerMove) {
+        //Set extra tile to the orientation specified in the specified player move
         this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(playerMove.getTileRotation()));
+        //Insert the extra tile at the insertion location specified in the specified player move
         this.extraTile = this.board.insertTile(this.extraTile, playerMove.getTileInsertion());
 
         final List<Coordinate> playerPath = playerMove.getPath();
 
+        //Move the player specified in the specified player move to the destination location specified
+        //in the specified player move
         this.board.movePlayer(playerMove.getPlayerId(), playerPath.get(playerPath.size() - 1));
     }
 
@@ -129,8 +184,8 @@ class GameController {
         ///If the player collected all treasures
         if(nextTreasureForPlayer == null) {
             return board.getPlayerHome(playerId);
-            //If the player hasn't collected all of their treasures and the next treasure they need to collect is
-            //on the board (not on extra tile)
+        //If the player hasn't collected all of their treasures and the next treasure they need to collect is
+        //on the board (not on extra tile)
         } else if(!extraTile.getTreasureType().equals(nextTreasureForPlayer)) {
             return board.getNextTreasureLocationForPlayer(playerId);
         }
@@ -153,9 +208,9 @@ class GameController {
                 }
 
                 //Create a copy of the current board and extra tile and insert the extra tile in the chosen insertion
-                // location with the chosen tile orientation
-                final Board tempBoard = board.createCopy();
-                final Tile tempExtraTile = extraTile.createCopy();
+                //location with the chosen tile orientation
+                final Board tempBoard = (Board)Cloner.deepCopy(board);
+                final Tile tempExtraTile = (Tile)Cloner.deepCopy(extraTile);
                 tempExtraTile.setMazePathOrientation(mazePathOrientation);
                 final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
 

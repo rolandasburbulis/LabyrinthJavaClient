@@ -1,14 +1,12 @@
 package Players.AIPlayer;
 
-import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Represents a tile of the game board
  */
-class Tile implements Serializable {
-    private static final long serialVersionUID = 584189200277769504L;
+class Tile  {
     private MazePathType mazePathType;
     private MazePathOrientation mazePathOrientation;
     private TreasureType treasureType;
@@ -126,25 +124,5 @@ class Tile implements Serializable {
         }
 
         return Tile.hasExitLookupTable[this.mazePathType.ordinal()][this.mazePathOrientation.ordinal()][compassDirection.ordinal()];
-    }
-
-    Tile createCopy() {
-        Tile copy = null;
-
-        try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(this);
-            out.flush();
-            out.close();
-
-            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
-            copy = (Tile) in.readObject();
-        }
-        catch(final IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return copy;
     }
 }

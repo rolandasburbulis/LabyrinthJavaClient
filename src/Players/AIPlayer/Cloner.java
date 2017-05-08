@@ -1,12 +1,9 @@
 package Players.AIPlayer;
 
+import Interface.Coordinate;
+
 import java.lang.reflect.Array;
-import java.util.HashMap;
-import java.util.TreeMap;
-import java.util.HashSet;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Some utilities to make duplicates of objects of specific types
@@ -31,8 +28,8 @@ public class Cloner {
      * </ul>
      */
     @SuppressWarnings("serial" )
-    public static final HashSet< Class<?> > IMMUTABLES =
-            new HashSet< Class<?> >() {{
+    public static final Set<Class<?>> IMMUTABLES =
+            new HashSet<Class<?>>() {{
                 add( Byte.class );
                 add( Short.class );
                 add( Integer.class );
@@ -54,8 +51,8 @@ public class Cloner {
      *
      * @param userClass the class to be declared immutable;
      */
-    public static void addImmutable( Class<?> userClass ) {
-        IMMUTABLES.add( userClass );
+    public static void addImmutable(Class<?> userClass) {
+        IMMUTABLES.add(userClass);
     }
 
     /**
@@ -70,15 +67,13 @@ public class Cloner {
      *   <li>primitive arrays</li>
      * </ul>
      */
-    public static final
-    HashMap< Class<?>, ClonerCommand > SUPPORTED_CLASSES =
-            new HashMap< Class<?>, ClonerCommand >();
+    public static final Map<Class<?>, ClonerCommand> SUPPORTED_CLASSES = new HashMap<>();
 
     /**
      * Add a new class and its cloning code to Cloner.
      */
-    public static void addSupportedClass( Class<?> cls, ClonerCommand ccmd ) {
-        SUPPORTED_CLASSES.put( cls, ccmd );
+    public static void addSupportedClass(Class<?> cls, ClonerCommand ccmd) {
+        SUPPORTED_CLASSES.put(cls, ccmd);
     }
 
     /**
@@ -92,9 +87,8 @@ public class Cloner {
      *
      * @param testClass the class to be checked for recognition
      */
-    public static boolean acceptable( Class<?> testClass ) {
-        return !( IMMUTABLES.contains( testClass ) ||
-                SUPPORTED_CLASSES.containsKey( testClass ) );
+    public static boolean acceptable(Class<?> testClass) {
+        return !(IMMUTABLES.contains(testClass) || SUPPORTED_CLASSES.containsKey(testClass));
     }
 
     /** The ClonerCommand class for LinkedLists */
@@ -184,6 +178,103 @@ public class Cloner {
     }
     static {
         SUPPORTED_CLASSES.put( HashMap.class, new HashMapCloner() );
+    }
+
+    /** The ClonerCommand class for HashSet */
+    private static class HashSetCloner implements ClonerCommand {
+        { SUPPORTED_CLASSES.put(HashSet.class, this); }
+        @SuppressWarnings("unchecked")
+        @Override
+        public Object iClone(Object original, boolean deep) {
+            final Set<Object> result = new HashSet<>();
+            final Set<Object> originalSet = (HashSet<Object>)original;
+
+            for(Object value: originalSet) {
+                result.add(deep ? deepCopy(value) : value);
+            }
+
+            return result;
+        }
+    }
+    static {
+        SUPPORTED_CLASSES.put(HashSet.class, new HashSetCloner());
+    }
+
+    /** The ClonerCommand class for Tile */
+    private static class TileCloner implements ClonerCommand {
+        { SUPPORTED_CLASSES.put(Tile.class, this); }
+        @SuppressWarnings("unchecked")
+        @Override
+        public Object iClone(Object original, boolean deep) {
+            final Tile originalTile = (Tile)original;
+
+            final Tile clonedTile = new Tile(
+                deep ? (MazePathType)deepCopy(originalTile.getMazePathType()) : originalTile.getMazePathType(),
+                deep ? (TreasureType)deepCopy(originalTile.getTreasureType()) : originalTile.getTreasureType()
+            );
+
+            final MazePathOrientation originalMazePathOrientation  = originalTile.getMazePathOrientation();
+
+            if(originalMazePathOrientation != null) {
+                clonedTile.setMazePathOrientation(deep ? (MazePathOrientation)deepCopy(originalMazePathOrientation) : originalMazePathOrientation);
+            }
+
+            clonedTile.addPlayers(deep ? (Set<Integer>)deepCopy(originalTile.getPlayers()) : originalTile.getPlayers());
+
+            return clonedTile;
+        }
+    }
+    static {
+        SUPPORTED_CLASSES.put(Tile.class, new TileCloner());
+    }
+
+    /** The ClonerCommand class for Board */
+    private static class BoardCloner implements ClonerCommand {
+        { SUPPORTED_CLASSES.put(Board.class, this); }
+        @SuppressWarnings("unchecked")
+        @Override
+        public Object iClone(Object original, boolean deep) {
+            final Board originalBoard = (Board)original;
+
+            final Board clonedBoard = new Board();
+
+            clonedBoard.setBoard(deep ? (Tile[][])deepCopy(originalBoard.getBoard()) : originalBoard.getBoard());
+            clonedBoard.setValidTileInsertionLocations(deep ? (Set<Coordinate>)deepCopy(originalBoard.getValidTileInsertionLocations()) : originalBoard.getValidTileInsertionLocations());
+
+            final Coordinate originalInvalidInsertionLocation  = originalBoard.getInvalidInsertionLocation();
+
+            if(originalInvalidInsertionLocation != null) {
+                clonedBoard.setInvalidInsertionLocation(deep ? (Coordinate)deepCopy(originalInvalidInsertionLocation) : originalInvalidInsertionLocation);
+            }
+
+            clonedBoard.setPlayerHomes(deep ? (Map<Integer, Coordinate>)deepCopy(originalBoard.getPlayerHomes()) : originalBoard.getPlayerHomes());
+            clonedBoard.setPlayerLocations(deep ? (Map<Integer, Coordinate>)deepCopy(originalBoard.getPlayerLocations()) : originalBoard.getPlayerLocations());
+            clonedBoard.setPlayerTreasures(deep ? (Map<Integer, Queue<TreasureType>>)deepCopy(originalBoard.getPlayerTreasures()) : originalBoard.getPlayerTreasures());
+            clonedBoard.setTreasureLocations(deep ? (Map<TreasureType, Coordinate>)deepCopy(originalBoard.getTreasureLocations()) : originalBoard.getTreasureLocations());
+
+            return clonedBoard;
+        }
+    }
+    static {
+        SUPPORTED_CLASSES.put(Board.class, new BoardCloner());
+    }
+
+    /** The ClonerCommand class for Coordinate */
+    private static class CoordinateCloner implements ClonerCommand {
+        { SUPPORTED_CLASSES.put(Coordinate.class, this); }
+        @SuppressWarnings("unchecked")
+        @Override
+        public Object iClone(Object original, boolean deep) {
+            Coordinate originalCoordinate = (Coordinate)original;
+
+            return new Coordinate(
+                deep ? (int)deepCopy(originalCoordinate.getRow()) : originalCoordinate.getRow(),
+                deep ? (int)deepCopy(originalCoordinate.getCol()) : originalCoordinate.getCol()
+            );
+        }
+    }
+    static {
+        SUPPORTED_CLASSES.put(Coordinate.class, new CoordinateCloner());
     }
 
     /**

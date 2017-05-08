@@ -23,8 +23,8 @@ public interface ClonerCommand {
      * @param original the object to be copied
      * @return a deep copy of the original
      */
-    public default Object iClone( Object original ) {
-        return iClone( original, true );
+    default Object iClone(Object original) {
+        return iClone(original, true);
     }
 
     /**
@@ -36,5 +36,5 @@ public interface ClonerCommand {
      * @param deep true if a deep copy is requested, otherwise a shallow copy
      * @return a deep or shallow copy of the original
      */
-    abstract Object iClone( Object original, boolean deep );
+    Object iClone(Object original, boolean deep);
 }

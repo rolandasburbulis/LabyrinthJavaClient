@@ -2,15 +2,12 @@ package Players.AIPlayer;
 
 import Interface.Coordinate;
 
-import java.io.*;
 import java.util.*;
 
 /**
  * Represents the game board
  */
-class Board implements Serializable {
-    private static final long serialVersionUID = 3060504898708106389L;
-
+class Board {
     private Tile[][] board;
     private Set<Coordinate> validTileInsertionLocations;
     private Coordinate invalidInsertionLocation;
@@ -24,6 +21,17 @@ class Board implements Serializable {
           final List<List<List<Integer>>> board) {
         initValidTileInsertionLocations();
         initBoard(playerHomes, treasures, board);
+    }
+
+    Board() {
+    }
+
+    Tile[][] getBoard() {
+        return this.board;
+    }
+
+    void setBoard(final Tile[][] board) {
+        this.board = board;
     }
 
     /**
@@ -121,6 +129,50 @@ class Board implements Serializable {
         return this.validTileInsertionLocations;
     }
 
+    void setValidTileInsertionLocations(final Set<Coordinate> validTileInsertionLocations) {
+        this.validTileInsertionLocations = validTileInsertionLocations;
+    }
+
+    Coordinate getInvalidInsertionLocation() {
+        return this.invalidInsertionLocation;
+    }
+
+    void setInvalidInsertionLocation(final Coordinate invalidInsertionLocation) {
+        this.invalidInsertionLocation = invalidInsertionLocation;
+    }
+
+    Map<Integer, Coordinate> getPlayerHomes() {
+        return this.playerHomes;
+    }
+
+    void setPlayerHomes(final Map<Integer, Coordinate> playerHomes) {
+        this.playerHomes = playerHomes;
+    }
+
+    Map<Integer, Coordinate> getPlayerLocations() {
+        return this.playerLocations;
+    }
+
+    void setPlayerLocations(final Map<Integer, Coordinate> playerLocations) {
+        this.playerLocations = playerLocations;
+    }
+
+    Map<Integer, Queue<TreasureType>> getPlayerTreasures() {
+        return this.playerTreasures;
+    }
+
+    void setPlayerTreasures(final Map<Integer, Queue<TreasureType>> playerTreasures) {
+        this.playerTreasures = playerTreasures;
+    }
+
+    Map<TreasureType, Coordinate> getTreasureLocations() {
+        return this.treasureLocations;
+    }
+
+    void setTreasureLocations(final Map<TreasureType, Coordinate> treasureLocations) {
+        this.treasureLocations = treasureLocations;
+    }
+
     void movePlayer(final int player, final Coordinate destinationLocation) {
         final Coordinate currentPlayerLocation = this.playerLocations.get(player);
 
@@ -155,45 +207,6 @@ class Board implements Serializable {
 
     Tile getTile(final int rowIndex, final int columnIndex) {
         return this.board[rowIndex][columnIndex];
-    }
-
-    public void print() {
-        for(int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
-            for(int columnIndex = 0; columnIndex < this.board[rowIndex].length; columnIndex++) {
-                final Tile tile = this.board[rowIndex][columnIndex];
-
-                System.out.print("(" + rowIndex + ", " + columnIndex + "):  ");
-                System.out.print(tile.getMazePathType().name() + " ");
-                System.out.print(tile.getMazePathOrientation().name() + " ");
-                System.out.print(tile.getTreasureType().name() + " ");
-
-                for(int player : tile.getPlayers()) {
-                    System.out.print(player + " ");
-                }
-
-                System.out.println();
-            }
-        }
-    }
-
-    Board createCopy() {
-        Board copy = null;
-
-        try {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            final ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(this);
-            out.flush();
-            out.close();
-
-            final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
-            copy = (Board) in.readObject();
-        }
-        catch(final IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return copy;
     }
 
     private void initValidTileInsertionLocations() {
