@@ -16,6 +16,17 @@ class Board {
     private Map<Integer, Queue<TreasureType>> playerTreasures;
     private Map<TreasureType, Coordinate> treasureLocations;
 
+    /**
+     * Initializes Board with the specified parameters
+     *
+     * @param playerHomes - starting locations for each player, in order
+     * @param treasures - ordered list of treasures for each player
+     * @param board - 2-d list of [Tile ID, Rotation, Treasure]
+     * Tile IDs:  0 = L tile, 1 = T tile, 2 = I tile
+     * Rotations: 0 = 0 degrees, 1 = 90 degrees, 2 = 180 degrees,
+     * 			  3 = 270 degrees, all clockwise
+     * Treasures: -1 = no treasure, 0-23 = corresponding treasure
+     */
     Board(final List<Coordinate> playerHomes,
           final List<List<Integer>> treasures,
           final List<List<List<Integer>>> board) {
@@ -23,13 +34,25 @@ class Board {
         initBoard(playerHomes, treasures, board);
     }
 
+    /**
+     * Initializes Board object without any data
+     */
     Board() {
     }
 
+    /**
+     * Returns the board array associated with this Board
+     *
+     * @return Tile[][] - board array associated with this Board
+     */
     Tile[][] getBoard() {
         return this.board;
     }
 
+    /**
+     *
+     * @param board
+     */
     void setBoard(final Tile[][] board) {
         this.board = board;
     }

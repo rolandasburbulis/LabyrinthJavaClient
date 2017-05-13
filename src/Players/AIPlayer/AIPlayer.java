@@ -18,20 +18,18 @@ public class AIPlayer implements PlayerModule
 	private GameController gameController;
 	
 	/**
-	 * Initializes your player module.  In this method, be sure to
-	 * set up your data structures and pre-populate them with the starting
-	 * board configuration.  All state should be stored in your player class.
+	 * Initializes the AI player module with the specified parameters
 	 * 
-	 * @param logger, reference to the logger class
-	 * @param playerId, the id of this player
-	 * @param playerHomes, starting locations for each player, in order
-	 * @param treasures, ordered list of treasures for each player
-	 * @param board 2-d list of [Tile ID, Rotation, Treasure]
-	 *        Tile IDs:  0 = L tile, 1 = T tile, 2 = I tile
-	 *        Treasures: -1 = no treasure, 0-23 = corresponding treasure
-	 *        Rotations: 0 = 0 degrees, 1 = 90 degrees, 2 = 180 degrees,
-	 *        			 3 = 270 degrees, all clockwise
-	 * @param extra contains [Extra Tile ID, Treasure]
+	 * @param logger - reference to the logger class
+	 * @param playerId- the id of this player
+	 * @param playerHomes - starting locations for each player, in order
+	 * @param treasures - ordered list of treasures for each player
+	 * @param board - 2-d list of [Tile ID, Rotation, Treasure]
+	 * Tile IDs:  0 = L tile, 1 = T tile, 2 = I tile
+	 * Rotations: 0 = 0 degrees, 1 = 90 degrees, 2 = 180 degrees,
+	 *            3 = 270 degrees, all clockwise
+	 * Treasures: -1 = no treasure, 0-23 = corresponding treasure
+	 * @param extra - contains [Extra Tile ID, Treasure]
 	 */
 	public void init(final Logger logger,
 					 final int playerId,
@@ -49,10 +47,10 @@ public class AIPlayer implements PlayerModule
 	}
 
 	/**
-	 * Called when it's your player's turn to make a move
-	 * This function needs to return the move that you want to make
-	 * If you return an invalid move, your player will be invalidated
-	 * @return a PlayerMove object
+	 * Called when it's the AI player's turn to make a move.  The AI player generates
+     * and returns it's next move.
+     *
+	 * @return the move that the AI player wants to make
 	 */
 	public PlayerMove move() {
 		log("Move was requested...");
@@ -61,11 +59,11 @@ public class AIPlayer implements PlayerModule
 	}
 
 	/**
-	 * Notifies you that a move was just made.  Use this function
-	 * to update your board state accordingly.  You may assume that 
-	 * all moves are given to you in the order that they are made.
-	 * You may also assume that all the passed moves are valid.
-	 * @param m the move
+	 * Notifies the AI player that a specified move was just made.  The AI player updates
+     * the state of the game with this move.  It is assumed that all moves are given in
+     * the order that they are made.  It is also assumed that all passed moves are valid.
+     *
+	 * @param m - the move that was just made
 	 */
 	public void lastMove(final PlayerMove m) {
 		log("Last move: " + m.toString());
@@ -74,10 +72,10 @@ public class AIPlayer implements PlayerModule
 	}
 
 	/**
-	 * Notifies you that an opponent player made a bad move 
-	 * and has been invalidated.
+	 * Notifies the AI player that the specified opponent player made a bad move and has
+	 * been invalidated
 	 * 
-	 * @param playerId, the id of the invalid player
+	 * @param playerId - the id of the invalid player
 	 */
 	public void playerInvalidated(final int playerId) {
 		log("Player " + Integer.toString(playerId) + " was invalidated :(");
@@ -85,36 +83,34 @@ public class AIPlayer implements PlayerModule
 	}
 		
 	/**
-	 * Returns all the cells adjacent to the given coordinate
+	 * Returns all the reachable cells which are adjacent to the specified coordinate.
+     * This is not implemented as it is not called by the engine.
 	 * 
-	 * The system calls this function only to verify that your implementation
-	 * is correct.  You may also use it to test your code.
-	 * 
-	 * @param c the coordinate to check
-	 * @return a set of reachable adjacent coordinates
+	 * @param c - the coordinate whose reachable adjacent cells are to be returned
+     *
+	 * @return a set of reachable coordinates which are adjacent to the specified
+     * coordinate
 	 */
 	public Set<Coordinate> getNeighbors(final Coordinate c) {
 		return null;
 	}
 	
 	/**
-	 * Returns any valid path between two coordinates
+	 * Returns any valid path between the two specified coordinates.  This is not
+     * implemented as it is not called by the engine.
 	 * 
-	 * The system calls this function only to verify that your implementation
-	 * is correct.  You may also use it to test your code.
-	 * 
-	 * @param start the start coordinate
-	 * @param end the end coordinate
-	 * @return an ordered list of Coordinate objects representing a path
+	 * @param start - the starting coordinate from which any valid path to the
+     * specified end coordinate should be returned
+	 * @param end - the end coordinate to which any valid path from the specified
+     * start coordinate should be returned
+     *
+	 * @return an ordered list of Coordinate objects representing a path from the
+     * specified start coordinate to the specified end coordinate
 	 */
 	public List<Coordinate> getPath(final Coordinate start, final Coordinate end) {
 		return null;
 	}
-	
-	/**
-	 * Sample log function.  Use this in your debugging!
-	 * @param msg message to log
-	 */
+
 	private void log(final String msg) {
 		String message = 
 			this.l.msg("AI (P" + Integer.toString(this.playerId) +")", msg);

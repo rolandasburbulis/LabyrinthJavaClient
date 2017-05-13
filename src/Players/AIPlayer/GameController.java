@@ -15,15 +15,17 @@ class GameController {
     private Tile extraTile;
 
     /**
-     * @param playerId, the id of this player
-	 * @param playerHomes, starting locations for each player, in order
-     * @param treasures, ordered list of treasures for each player
-     * @param board 2-d list of [Tile ID, Rotation, Treasure]
-     *        Tile IDs:  0 = L tile, 1 = T tile, 2 = I tile
-     *        Treasures: -1 = no treasure, 0-23 = corresponding treasure
-     *        Rotations: 0 = 0 degrees, 1 = 90 degrees, 2 = 180 degrees,
-     *        			 3 = 270 degrees, all clockwise
-     * @param extraTile contains [Extra Tile ID, Treasure]
+     * Initializes GameController with the specified parameters
+     *
+     * @param playerId - the id of this player
+	 * @param playerHomes - starting locations for each player, in order
+     * @param treasures - ordered list of treasures for each player
+     * @param board - 2-d list of [Tile ID, Rotation, Treasure]
+     * Tile IDs:  0 = L tile, 1 = T tile, 2 = I tile
+     * Rotations: 0 = 0 degrees, 1 = 90 degrees, 2 = 180 degrees,
+     *  	      3 = 270 degrees, all clockwise
+     * Treasures: -1 = no treasure, 0-23 = corresponding treasure
+     * @param extraTile - contains [Extra Tile ID, Treasure]
      */
     GameController(final int playerId,
                    final List<Coordinate> playerHomes,
@@ -37,6 +39,11 @@ class GameController {
                                   TreasureType.fromId(extraTile.get(1)));
     }
 
+    /**
+     * Generates and returns the player's next best move
+     *
+     * @return player's next best move
+     */
     PlayerMove findBestMove() {
         final List<PlayerMove> bestPlayerMoves = new ArrayList<>();
         int myBestManhattanDistanceToGoal = Integer.MAX_VALUE;
@@ -142,6 +149,13 @@ class GameController {
         return bestPlayerMoves.get(new Random().nextInt(bestPlayerMoves.size()));
     }
 
+    /**
+     * 	Notifies the player that a specified move was just made.  The AI player updates
+     * the state of the game with this move.  It is assumed that all moves are given in
+     * the order that they are made.  It is also assumed that all passed moves are valid.
+     *
+     * @param playerMove - the move that was just made
+     */
     void handlePlayerMove(final PlayerMove playerMove) {
         //Set extra tile to the orientation specified in the specified player move
         this.extraTile.setMazePathOrientation(MazePathOrientation.fromId(playerMove.getTileRotation()));
