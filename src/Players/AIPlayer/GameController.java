@@ -112,10 +112,10 @@ class GameController {
                     //Calculate Manhattan distance from the closest approach to the next goal coordinate to the goal coordinate
                     final int myManhattanDistanceToGoal = calculateManhattanDistance(myPathTowardsNextGoal.get(myPathTowardsNextGoal.size() - 1), myNextGoalCoordinate);
 
-                    //If the Manhattan disatance from the closest approach to the next goal coordinate to the goal coordinate is
+                    //If the Manhattan distance from the closest approach to the next goal coordinate to the goal coordinate is
                     //better than or equal than the approach to the goal coordinate from previously considered insertions
                     if(myManhattanDistanceToGoal <= myBestManhattanDistanceToGoal) {
-                        //If the Manhattan disatance from the closest approach to the next goal coordinate to the goal coordinate is
+                        //If the Manhattan distance from the closest approach to the next goal coordinate to the goal coordinate is
                         //better than the approach to the goal coordinate from previously considered insertions
                         if(myManhattanDistanceToGoal < myBestManhattanDistanceToGoal) {
                             bestPlayerMoves.clear();
@@ -169,14 +169,15 @@ class GameController {
         this.board.movePlayer(playerMove.getPlayerId(), playerPath.get(playerPath.size() - 1));
     }
 
-    private Coordinate getNextGoalCoordinateForPlayer(final Board board, final int playerId, final Tile extraTile) {
+    private Coordinate getNextGoalCoordinateForPlayer(final Board board, final int playerId,
+                                                      final Tile extraTile) {
         final TreasureType nextTreasureForPlayer = board.getNextTreasureForPlayer(playerId);
 
         ///If the player collected all treasures
         if(nextTreasureForPlayer == null) {
             return board.getPlayerHome(playerId);
-        //If the player hasn't collected all of their treasures and the next treasure they need to collect is
-        //on the board (not on extra tile)
+        //If the player hasn't collected all of their treasures and the next treasure they need
+        //to collect is on the board (not on extra tile)
         } else if(!extraTile.getTreasureType().equals(nextTreasureForPlayer)) {
             return board.getNextTreasureLocationForPlayer(playerId);
         }
@@ -185,13 +186,14 @@ class GameController {
         return null;
     }
 
-    private int calculateNextOpponentBestManhattanDistanceToGoal(final Board board, final Tile extraTile) {
+    private int calculateNextOpponentBestManhattanDistanceToGoal(final Board board,
+                                                                 final Tile extraTile) {
         int nextOpponentBestManhattanDistanceToGoal = Integer.MAX_VALUE;
 
         for(Coordinate tileInsertionLocation : board.getValidTileInsertionLocations()) {
             for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
-                //Ignore 180 and 270 degree maze path orientation for 'I' maze type path, as they are equivalent
-                //to 0 and 90 degree maze path orientations.
+                //Ignore 180 and 270 degree maze path orientation for 'I' maze type path, as they
+                //are equivalent to 0 and 90 degree maze path orientations.
                 if(extraTile.getMazePathType().equals(MazePathType.I) &&
                         (mazePathOrientation.equals(MazePathOrientation.ONE_HUNDRED_EIGHTY) ||
                                 mazePathOrientation.equals(MazePathOrientation.TWO_HUNDRED_SEVENTY))) {
@@ -205,22 +207,28 @@ class GameController {
                 tempExtraTile.setMazePathOrientation(mazePathOrientation);
                 final Tile newTempExtraTile = tempBoard.insertTile(tempExtraTile, tileInsertionLocation);
 
-                final Coordinate nextOpponentNextGoalCoordinate = getNextGoalCoordinateForPlayer(tempBoard, this.nextOpponentPlayerId, newTempExtraTile);
+                final Coordinate nextOpponentNextGoalCoordinate = getNextGoalCoordinateForPlayer(tempBoard,
+                        this.nextOpponentPlayerId, newTempExtraTile);
 
                 int nextOpponentManhattanDistanceToGoal = Integer.MAX_VALUE;
 
                 if(nextOpponentNextGoalCoordinate != null) {
-                    final Coordinate nextOpponentCurrentLocationCoordinate = tempBoard.getPlayerLocation(this.nextOpponentPlayerId);
+                    final Coordinate nextOpponentCurrentLocationCoordinate = tempBoard.getPlayerLocation(
+                            this.nextOpponentPlayerId);
 
                     if(nextOpponentCurrentLocationCoordinate.equals(nextOpponentNextGoalCoordinate)) {
                         return 0;
                     } else {
-                        final List<Coordinate> nextOpponentPathTowardsNextGoal = findBestPathTowardsNextGoalForPlayer(tempBoard, this.nextOpponentPlayerId, nextOpponentNextGoalCoordinate);
+                        final List<Coordinate> nextOpponentPathTowardsNextGoal = findBestPathTowardsNextGoalForPlayer(
+                                tempBoard, this.nextOpponentPlayerId, nextOpponentNextGoalCoordinate);
 
-                        if(nextOpponentPathTowardsNextGoal.get(nextOpponentPathTowardsNextGoal.size() - 1).equals(nextOpponentNextGoalCoordinate)) {
+                        if(nextOpponentPathTowardsNextGoal.get(nextOpponentPathTowardsNextGoal.size() - 1)
+                                .equals(nextOpponentNextGoalCoordinate)) {
                             return 0;
                         } else {
-                            nextOpponentManhattanDistanceToGoal = calculateManhattanDistance(nextOpponentPathTowardsNextGoal.get(nextOpponentPathTowardsNextGoal.size() - 1), nextOpponentNextGoalCoordinate);
+                            nextOpponentManhattanDistanceToGoal = calculateManhattanDistance(
+                                    nextOpponentPathTowardsNextGoal.get(nextOpponentPathTowardsNextGoal.size() - 1),
+                                    nextOpponentNextGoalCoordinate);
                         }
                     }
                 }
@@ -238,10 +246,7 @@ class GameController {
                                                                   final int playerId,
                                                                   final Coordinate goalCoordinate) {
         final Map<Coordinate, Coordinate> reachableCoordinates = findAllReachableCoordinates(board,
-                                                                                             null,
-                                                                                             board.getPlayerLocation(playerId),
-                                                                                             goalCoordinate,
-                                                                                             new HashMap<>());
+                null, board.getPlayerLocation(playerId), goalCoordinate, new HashMap<>());
 
         final List<Coordinate> bestReachableCoordinates = new ArrayList<>();
 
@@ -251,7 +256,8 @@ class GameController {
             int bestManhattanDistanceReachableCoordinateToGoal = Integer.MAX_VALUE;
 
             for(Coordinate reachableCoordinate : reachableCoordinates.keySet()) {
-                final int manhattanDistanceReachableCoordinateToGoal = calculateManhattanDistance(reachableCoordinate, goalCoordinate);
+                final int manhattanDistanceReachableCoordinateToGoal = calculateManhattanDistance(reachableCoordinate,
+                        goalCoordinate);
 
                 if(manhattanDistanceReachableCoordinateToGoal <= bestManhattanDistanceReachableCoordinateToGoal) {
                     if(manhattanDistanceReachableCoordinateToGoal < bestManhattanDistanceReachableCoordinateToGoal) {
@@ -293,7 +299,8 @@ class GameController {
 
         //check neighboring tile to the north
         if(currentLocationCoordinate.getRow() > 0) {
-            final Coordinate northTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() - 1, currentLocationCoordinate.getCol());
+            final Coordinate northTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() - 1,
+                    currentLocationCoordinate.getCol());
             final Tile northTile = board.getTile(northTileCoordinate.getRow(), northTileCoordinate.getCol());
 
             if(currentLocationTile.hasExit(CompassDirection.NORTH) && northTile.hasExit(CompassDirection.SOUTH)) {
@@ -302,7 +309,8 @@ class GameController {
 
                     return reachableCoordinates;
                 } else if(!reachableCoordinates.containsKey(northTileCoordinate)) {
-                    reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, northTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                    reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate,
+                            northTileCoordinate, nextGoalCoordinate, reachableCoordinates));
                 }
             }
         }
@@ -310,8 +318,10 @@ class GameController {
         if(!reachableCoordinates.containsKey(nextGoalCoordinate)) {
             //check neighboring tile to the south
             if (currentLocationCoordinate.getRow() < Coordinate.BOARD_DIM - 1) {
-                final Coordinate southTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
-                final Tile southTile = board.getTile(currentLocationCoordinate.getRow() + 1, currentLocationCoordinate.getCol());
+                final Coordinate southTileCoordinate = new Coordinate(currentLocationCoordinate.getRow() + 1,
+                        currentLocationCoordinate.getCol());
+                final Tile southTile = board.getTile(currentLocationCoordinate.getRow() + 1,
+                        currentLocationCoordinate.getCol());
 
                 if (currentLocationTile.hasExit(CompassDirection.SOUTH) && southTile.hasExit(CompassDirection.NORTH)) {
                     if (southTileCoordinate.equals(nextGoalCoordinate)) {
@@ -319,7 +329,8 @@ class GameController {
 
                         return reachableCoordinates;
                     } else if (!reachableCoordinates.containsKey(southTileCoordinate)) {
-                        reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, southTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                        reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate,
+                                southTileCoordinate, nextGoalCoordinate, reachableCoordinates));
                     }
                 }
             }
@@ -327,8 +338,10 @@ class GameController {
             if(!reachableCoordinates.containsKey(nextGoalCoordinate)) {
                 //check neighboring tile to the west
                 if(currentLocationCoordinate.getCol() > 0) {
-                    final Coordinate westTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
-                    final Tile westTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() - 1);
+                    final Coordinate westTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(),
+                            currentLocationCoordinate.getCol() - 1);
+                    final Tile westTile = board.getTile(currentLocationCoordinate.getRow(),
+                            currentLocationCoordinate.getCol() - 1);
 
                     if(currentLocationTile.hasExit(CompassDirection.WEST) && westTile.hasExit(CompassDirection.EAST)) {
                         if(westTileCoordinate.equals(nextGoalCoordinate)) {
@@ -336,7 +349,8 @@ class GameController {
 
                             return reachableCoordinates;
                         } else if(!reachableCoordinates.containsKey(westTileCoordinate)) {
-                            reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, westTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                            reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate,
+                                    westTileCoordinate, nextGoalCoordinate, reachableCoordinates));
                         }
                     }
                 }
@@ -344,8 +358,10 @@ class GameController {
                 if(!reachableCoordinates.containsKey(nextGoalCoordinate)) {
                     //check neighboring tile to the east
                     if(currentLocationCoordinate.getCol() < Coordinate.BOARD_DIM - 1) {
-                        final Coordinate eastTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
-                        final Tile eastTile = board.getTile(currentLocationCoordinate.getRow(), currentLocationCoordinate.getCol() + 1);
+                        final Coordinate eastTileCoordinate = new Coordinate(currentLocationCoordinate.getRow(),
+                                currentLocationCoordinate.getCol() + 1);
+                        final Tile eastTile = board.getTile(currentLocationCoordinate.getRow(),
+                                currentLocationCoordinate.getCol() + 1);
 
                         if(currentLocationTile.hasExit(CompassDirection.EAST) && eastTile.hasExit(CompassDirection.WEST)) {
                             if(eastTileCoordinate.equals(nextGoalCoordinate)) {
@@ -353,7 +369,8 @@ class GameController {
 
                                 return reachableCoordinates;
                             } else if(!reachableCoordinates.containsKey(eastTileCoordinate)) {
-                                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate, eastTileCoordinate, nextGoalCoordinate, reachableCoordinates));
+                                reachableCoordinates.putAll(findAllReachableCoordinates(board, currentLocationCoordinate,
+                                        eastTileCoordinate, nextGoalCoordinate, reachableCoordinates));
                             }
                         }
                     }
@@ -365,6 +382,7 @@ class GameController {
     }
 
     private int calculateManhattanDistance(final Coordinate coordinate1, final Coordinate coordinate2) {
-        return Math.abs(coordinate2.getRow() - coordinate1.getRow()) + Math.abs(coordinate2.getCol() - coordinate1.getCol());
+        return Math.abs(coordinate2.getRow() - coordinate1.getRow()) +
+                Math.abs(coordinate2.getCol() - coordinate1.getCol());
     }
 }

@@ -23,41 +23,71 @@ class Tile  {
                 [CompassDirection.values().length];
 
         for(int mazePathType = 0; mazePathType < MazePathType.values().length; mazePathType++) {
-            for(int mazePathOrientation = 0; mazePathOrientation < MazePathOrientation.values().length; mazePathOrientation++) {
-                for(int compassDirection = 0; compassDirection < CompassDirection.values().length; compassDirection++) {
+            for(int mazePathOrientation = 0; mazePathOrientation < MazePathOrientation.values().length;
+                mazePathOrientation++) {
+                for(int compassDirection = 0; compassDirection < CompassDirection.values().length;
+                    compassDirection++) {
                     hasExitLookupTable[mazePathType][mazePathOrientation][compassDirection] = false;
                 }
             }
         }
 
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.WEST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.WEST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.WEST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.WEST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.WEST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ZERO.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.WEST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.NINETY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.NORTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.EAST.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.SOUTH.ordinal()] = true;
-        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()][CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.I.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.L.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ZERO.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.NINETY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.NORTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.ONE_HUNDRED_EIGHTY.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.EAST.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.SOUTH.ordinal()] = true;
+        hasExitLookupTable[MazePathType.T.ordinal()][MazePathOrientation.TWO_HUNDRED_SEVENTY.ordinal()]
+                [CompassDirection.WEST.ordinal()] = true;
     }
 
     /**
@@ -209,9 +239,11 @@ class Tile  {
      */
     boolean hasExit(final CompassDirection compassDirection) {
         if(this.mazePathOrientation == null) {
-            throw new IllegalStateException("This tile does not have an orientation set, therefore checking if it has an exit in a particular compass direction is not valid.");
+            throw new IllegalStateException("This tile does not have an orientation set, therefore checking " +
+                "if it has an exit in a particular compass direction is not valid.");
         }
 
-        return Tile.hasExitLookupTable[this.mazePathType.ordinal()][this.mazePathOrientation.ordinal()][compassDirection.ordinal()];
+        return Tile.hasExitLookupTable[this.mazePathType.ordinal()][this.mazePathOrientation.ordinal()]
+                [compassDirection.ordinal()];
     }
 }

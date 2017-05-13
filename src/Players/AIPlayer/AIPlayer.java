@@ -41,14 +41,15 @@ public class AIPlayer implements PlayerModule
 		this.playerId = playerId;
 
 		//SHOULDN'T NEED TO DO playerHomes.subList(...) but engine is return 4 players always at the moment
-		this.gameController = new GameController(playerId, playerHomes.subList(0, treasures.size()), treasures, board, extra);
+		this.gameController = new GameController(playerId, playerHomes.subList(0, treasures.size()),
+                treasures, board, extra);
 		
 		log("Loaded");
 	}
 
 	/**
 	 * Called when it's the AI player's turn to make a move.  The AI player generates
-     * and returns it's next move.
+     * and returns its next move.
      *
 	 * @return the move that the AI player wants to make
 	 */

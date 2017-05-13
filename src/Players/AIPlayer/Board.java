@@ -185,7 +185,8 @@ class Board {
         final Tile shiftedOutTile;
 
         if(!this.validTileInsertionLocations.contains(tileInsertionLocation)) {
-            throw new IllegalArgumentException("Specified tile insertion location is not a valid tile insertion location.");
+            throw new IllegalArgumentException("Specified tile insertion location is not a valid tile" +
+                    "insertion location.");
         }
 
         if(this.invalidInsertionLocation != null) {
@@ -264,7 +265,7 @@ class Board {
      *
      * @param player - player which should be moved to the location identified by the specified
      * destination location
-     * @param destinationLocation - location to which the specified player should be move tos
+     * @param destinationLocation - location to which the specified player should be move to
      */
     void movePlayer(final int player, final Coordinate destinationLocation) {
         final Coordinate currentPlayerLocation = this.playerLocations.get(player);
