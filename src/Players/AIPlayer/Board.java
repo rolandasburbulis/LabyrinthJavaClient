@@ -41,32 +41,142 @@ class Board {
     }
 
     /**
-     * Returns the board array associated with this Board
+     * Returns the board array of tiles representing this Board
      *
-     * @return Tile[][] - board array associated with this Board
+     * @return board array of tiles representing this Board
      */
     Tile[][] getBoard() {
         return this.board;
     }
 
     /**
+     * Sets the board array of tiles representing this Board
      *
-     * @param board
+     * @param board - board array of tiles representing this Board
      */
     void setBoard(final Tile[][] board) {
         this.board = board;
     }
 
     /**
-     * Insert the specified tile at the location identified by the specified coordinate
-     * and return the tile that was pushed out as as result the inserting the specified tile.
+     * Gets the set of valid tile insertions locations
+
+     * @return set of valid tile insertion locations
+     */
+    Set<Coordinate> getValidTileInsertionLocations() {
+        return this.validTileInsertionLocations;
+    }
+
+    /**
+     * Sets the set of valid tile insertion locations
+     *
+     * @param validTileInsertionLocations - set of valid tile insertion locations
+     */
+    void setValidTileInsertionLocations(final Set<Coordinate> validTileInsertionLocations) {
+        this.validTileInsertionLocations = validTileInsertionLocations;
+    }
+
+    /**
+     * Gets the insertion location not valid for insertion at this time
+
+     * @return insertion location not valid for insertion at this time
+     */
+    Coordinate getInvalidInsertionLocation() {
+        return this.invalidInsertionLocation;
+    }
+
+    /**
+     * Sets the insertion location not valid for insertion at this time
+     *
+     * @param invalidInsertionLocation - insertion location not valid for insertion
+     * at this time
+     */
+    void setInvalidInsertionLocation(final Coordinate invalidInsertionLocation) {
+        this.invalidInsertionLocation = invalidInsertionLocation;
+    }
+
+    /**
+     * Gets the map mapping each player to their home location
+     *
+     * @return map mapping each player to their home location
+     */
+    Map<Integer, Coordinate> getPlayerHomes() {
+        return this.playerHomes;
+    }
+
+    /**
+     * Sets the map mapping each player to their home location
+     *
+     * @param playerHomes - map mapping each player to their home location
+     */
+    void setPlayerHomes(final Map<Integer, Coordinate> playerHomes) {
+        this.playerHomes = playerHomes;
+    }
+
+    /**
+     * Gets the map mapping each player their current location
+     *
+     * @return map mapping each player to their current location
+     */
+    Map<Integer, Coordinate> getPlayerLocations() {
+        return this.playerLocations;
+    }
+
+    /**
+     * Sets the map mapping each player to their current location
+     *
+     * @param playerLocations - map mapping each player to their current location
+     */
+    void setPlayerLocations(final Map<Integer, Coordinate> playerLocations) {
+        this.playerLocations = playerLocations;
+    }
+
+    /**
+     * Gets the map mapping each player to their treasure pile
+     *
+     * @return mapping mapping each player to their treasure pile
+     */
+    Map<Integer, Queue<TreasureType>> getPlayerTreasures() {
+        return this.playerTreasures;
+    }
+
+    /**
+     * Sets the map mapping each player to their treasure pile
+     *
+     * @param playerTreasures - map mapping each player to their treasure pile
+     */
+    void setPlayerTreasures(final Map<Integer, Queue<TreasureType>> playerTreasures) {
+        this.playerTreasures = playerTreasures;
+    }
+
+    /**
+     * Gets the map mapping each treasure to their current location
+     *
+     * @return map mapping each treasure to their current location
+     */
+    Map<TreasureType, Coordinate> getTreasureLocations() {
+        return this.treasureLocations;
+    }
+
+    /**
+     * Sets the map mapping each treasure to their current location
+     *
+     * @param treasureLocations - map mapping each treasure to their current location
+     */
+    void setTreasureLocations(final Map<TreasureType, Coordinate> treasureLocations) {
+        this.treasureLocations = treasureLocations;
+    }
+
+    /**
+     * Inserts the specified tile at the location identified by the specified coordinate
+     * and returns the tile that was pushed out as as result the inserting the specified tile.
      * Illegal argument exception is thrown if the location where the tile should be inserted
      * at is not a valid insertion location.
      *
      * @param tileToInsert - tile to be inserted
      * @param tileInsertionLocation - location where the tile to be inserted will be inserted at
      *
-     * @return Tile that was pushed out as a result of the inserted tile
+     * @return tile that was pushed out as a result of the inserted tile
      * @throws IllegalArgumentException if the location where the tile should be inserted at
      * is not a valid insertion location
      */
@@ -148,54 +258,13 @@ class Board {
         return shiftedOutTile;
     }
 
-    Set<Coordinate> getValidTileInsertionLocations() {
-        return this.validTileInsertionLocations;
-    }
-
-    void setValidTileInsertionLocations(final Set<Coordinate> validTileInsertionLocations) {
-        this.validTileInsertionLocations = validTileInsertionLocations;
-    }
-
-    Coordinate getInvalidInsertionLocation() {
-        return this.invalidInsertionLocation;
-    }
-
-    void setInvalidInsertionLocation(final Coordinate invalidInsertionLocation) {
-        this.invalidInsertionLocation = invalidInsertionLocation;
-    }
-
-    Map<Integer, Coordinate> getPlayerHomes() {
-        return this.playerHomes;
-    }
-
-    void setPlayerHomes(final Map<Integer, Coordinate> playerHomes) {
-        this.playerHomes = playerHomes;
-    }
-
-    Map<Integer, Coordinate> getPlayerLocations() {
-        return this.playerLocations;
-    }
-
-    void setPlayerLocations(final Map<Integer, Coordinate> playerLocations) {
-        this.playerLocations = playerLocations;
-    }
-
-    Map<Integer, Queue<TreasureType>> getPlayerTreasures() {
-        return this.playerTreasures;
-    }
-
-    void setPlayerTreasures(final Map<Integer, Queue<TreasureType>> playerTreasures) {
-        this.playerTreasures = playerTreasures;
-    }
-
-    Map<TreasureType, Coordinate> getTreasureLocations() {
-        return this.treasureLocations;
-    }
-
-    void setTreasureLocations(final Map<TreasureType, Coordinate> treasureLocations) {
-        this.treasureLocations = treasureLocations;
-    }
-
+    /**
+     * Moves the specified player to the location identified by the specified destination location
+     *
+     * @param player - player which should be moved to the location identified by the specified
+     * destination location
+     * @param destinationLocation - location to which the specified player should be move tos
+     */
     void movePlayer(final int player, final Coordinate destinationLocation) {
         final Coordinate currentPlayerLocation = this.playerLocations.get(player);
 
@@ -212,22 +281,63 @@ class Board {
         this.playerLocations.put(player, destinationLocation);
     }
 
+    /**
+     * Gets the home location of the specified player
+     *
+     * @param player - player whose home location is to be returned
+     *
+     * @return home location of the specified player
+     */
     Coordinate getPlayerHome(final int player) {
         return this.playerHomes.get(player);
     }
 
+    /**
+     * Gets the current location of the specified player
+     *
+     * @param player - player whose current location is to be returned
+     *
+     * @return current location of the specified player
+     */
     Coordinate getPlayerLocation(final int player) {
         return this.playerLocations.get(player);
     }
 
+    /**
+     * Gets the next treasure that needs to be collected by the specified player
+     *
+     * @param player - player whose next treasure to be collected is to be returned
+     *
+     * @return next treasure that needs to be collected by the specified player
+     */
     TreasureType getNextTreasureForPlayer(final int player) {
         return this.playerTreasures.get(player).peek();
     }
 
+    /**
+     * Gets the location of the next treasure that needs to be collected by the
+     * specified player
+     *
+     * @param player - player whose location of the next treasure to be collected
+     * is to be returned
+     *
+     * @return location of the next treasure that needs to be collected by the
+     * specified player
+     */
     Coordinate getNextTreasureLocationForPlayer(final int player) {
         return this.treasureLocations.get(this.playerTreasures.get(player).peek());
     }
 
+    /**
+     * Gets the tile located at the row and column location identified by the
+     * specified row and column indices
+     *
+     * @param rowIndex - identifies the row where the tile to be returned is located at
+     * @param columnIndex - identifies the column where the tile to be returned is located at
+     *
+     * @return tile located at the row and column location identified by the
+     * specified row and column indices
+     */
     Tile getTile(final int rowIndex, final int columnIndex) {
         return this.board[rowIndex][columnIndex];
     }
