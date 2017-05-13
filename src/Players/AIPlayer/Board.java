@@ -17,7 +17,7 @@ class Board {
     private Map<TreasureType, Coordinate> treasureLocations;
 
     /**
-     * Initializes Board with the specified parameters
+     * Initializes the Board with the specified parameters
      *
      * @param playerHomes - starting locations for each player, in order
      * @param treasures - ordered list of treasures for each player
@@ -35,7 +35,7 @@ class Board {
     }
 
     /**
-     * Initializes Board object without any data
+     * Initializes the Board object without any data
      */
     Board() {
     }
@@ -177,6 +177,7 @@ class Board {
      * @param tileInsertionLocation - location where the tile to be inserted will be inserted at
      *
      * @return tile that was pushed out as a result of the inserted tile
+     *
      * @throws IllegalArgumentException if the location where the tile should be inserted at
      * is not a valid insertion location
      */

@@ -15,7 +15,7 @@ class GameController {
     private Tile extraTile;
 
     /**
-     * Initializes GameController with the specified parameters
+     * Initializes the GameController with the specified parameters
      *
      * @param playerId - the id of this player
 	 * @param playerHomes - starting locations for each player, in order

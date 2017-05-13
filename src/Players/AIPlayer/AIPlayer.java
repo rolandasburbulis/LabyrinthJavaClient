@@ -18,7 +18,7 @@ public class AIPlayer implements PlayerModule
 	private GameController gameController;
 	
 	/**
-	 * Initializes the AI player module with the specified parameters
+	 * Initializes the AIPlayer with the specified parameters
 	 * 
 	 * @param logger - reference to the logger class
 	 * @param playerId- the id of this player

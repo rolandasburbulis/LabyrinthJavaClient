@@ -36,10 +36,28 @@ enum TreasureType {
         this.id = id;
     }
 
+    /**
+     * Gets the id associated with the TreasureType
+     *
+     * @return id associated with the TreasureType
+     */
     public int getId() {
         return this.id;
     }
 
+    /**
+     * Gets the value of TreasureType whose id matches the specified id.  Throws
+     * IllegalArgumentException if none of the values of TreasureType have an id
+     * matching the specified id.
+     *
+     * @param id - identifies the id of the value of TreasureType which is
+     * to be returned
+     *
+     * @return value of TreasureType whose id matches the specified id
+     *
+     * @throws IllegalArgumentException if none of the values of TreasureType have
+     * an id matching the specified id
+     */
     public static TreasureType fromId(final int id) {
         for(TreasureType treasureType : TreasureType.values()) {
             if(treasureType.getId() == id) {

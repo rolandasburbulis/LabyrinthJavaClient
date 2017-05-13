@@ -4,24 +4,26 @@ package Players.AIPlayer;
  * Represents a maze path orientation
  */
 enum MazePathOrientation {
-    ZERO(0),
-    NINETY(1),
-    ONE_HUNDRED_EIGHTY(2),
-    TWO_HUNDRED_SEVENTY(3);
+    ZERO,
+    NINETY,
+    ONE_HUNDRED_EIGHTY,
+    TWO_HUNDRED_SEVENTY;
 
-    private int id;
-
-    MazePathOrientation(final int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
+    /**
+     * Gets the value of MazePathOrientation matching the specified id.  Throws
+     * IllegalArgumentException if none of the values of MazePathOrientation match
+     * the specified id.
+     *
+     * @param id - identifies the value of MazePathOrientation which is to be returned
+     *
+     * @return value of MazePathOrientation matching the specified id
+     * 
+     * @throws IllegalArgumentException if none of the values of MazePathOrientation
+     * match the specified id
+     */
     public static MazePathOrientation fromId(final int id) {
         for(MazePathOrientation mazePathOrientation : MazePathOrientation.values()) {
-            if(mazePathOrientation.getId() == id) {
+            if(mazePathOrientation.ordinal() == id) {
                 return mazePathOrientation;
             }
         }
